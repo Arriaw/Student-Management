@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner; 
@@ -30,6 +31,10 @@ public class Main {
         /*check if the username exist in the database */
         return true; 
 
+    }
+
+    void x(){
+        
     }
 
     static ArrayList<Course> RetrieveCourse(){

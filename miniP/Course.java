@@ -113,4 +113,8 @@ public class Course {
         updateStudentCount();
         return studentCount;
     }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
 }
