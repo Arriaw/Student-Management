@@ -40,7 +40,6 @@ public class Course {
             Map.Entry<Student, Double> entry = sortedEntries.get(i);
             System.out.println("    " + (i+1) + ": Name: " + entry.getKey().getStudentName() + ", Score: " + entry.getValue());
         }
-
     }
 
     void addScore(Student student, double score) {
@@ -61,10 +60,13 @@ public class Course {
 
     void addStudent(Student student) {
         students.add(student);
+        studentScores.put(student, 0.0);
     }
 
     void removeStudent(Student student) {
         students.remove(student);
+        studentScores.remove(student);
+        student.removeCourse(this);
     }
 
     void addAssignment(Assignment assignment) {
@@ -114,7 +116,11 @@ public class Course {
         return studentCount;
     }
 
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 }

@@ -11,13 +11,16 @@ public class Test {
         Student s1 = new Student("Aria", "1");
         Student s2 = new Student("Ariaa", "2");
         Student s3 = new Student("Ariaaa", "3");
+        Student s4 = new Student("Ariaaaaa", "4");
+        s4.printCourses();
+        s4.printRecord();
 
-        Assignment a1 = new Assignment(c1, "2024-04-18");
-        Assignment a2 = new Assignment(c1, "2024-04-19");
-        Assignment a3 = new Assignment(c2, "2024-04-20");
-        Assignment a4 = new Assignment(c2, "2024-04-07");
-        Assignment a5 = new Assignment(c2, "2024-04-29");
-        Assignment a6 = new Assignment(c3, "2024-04-10");
+        Assignment a1 = new Assignment(c1, "2024-04-18", "PSET", "PSET", 0.1);
+        Assignment a2 = new Assignment(c1, "2024-04-19", "PSET", "PSET", 0.1);
+        Assignment a3 = new Assignment(c2, "2024-04-20", "PSET", "PSET", 0.1);
+        Assignment a4 = new Assignment(c2, "2024-04-07", "PSET", "PSET", 0.1);
+        Assignment a5 = new Assignment(c2, "2024-04-29", "PSET", "PSET", 0.1);
+        Assignment a6 = new Assignment(c3, "2024-04-10", "PSET", "PSET", 0.1);
 
         a1.printRemainingDays();
         a4.printRemainingDays();
@@ -33,23 +36,31 @@ public class Test {
 
         t2.addCourse(c2);
         t2.addStudent(s1, c2);
-        t2.addStudent(s2, c2);
+        // t2.addStudent(s2, c2);
+        t2.addStudent(s4, c2);
         t2.addStudent(s3, c2);
+        System.out.println(c2.getStudentCount());
 
         t2.setScore(s1, c2, 19.5);
         t1.setScore(s1, c1, 19);
-
+        
         System.out.println(s1.getAverageScore());
         s1.printCourses();
         System.out.println(s1.getNumberOfUnits());
-
+        
         s1.printRecord();
-
-        c2.printStudents();
+        
         System.out.println(c2.getExamDate());
-
+        
         t2.setScore(s2, c2, 17);
         t2.setScore(s3, c2, 18);
+        t2.setScore(s3, c2, 17.7);
+        // c2.removeStudent(s1);
+        // c2.printStudents();
         c2.printTopStudents();
+        s1.printRecord();
+        System.out.println(s1.worstCourse().getName());
+        // s1.printCourses();
+        // s1.printRecord();
     }
 }

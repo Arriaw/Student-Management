@@ -117,13 +117,21 @@ public class Teacher {
         return coursesInTerm;
     }
 
+    void updateNumberOfCourses() {
+        numberOfCoursesInTerm = coursesInTerm.size();
+    }
+
     public int getNumberOfCoursesInTerm() {
-        return coursesInTerm.size();
+        updateNumberOfCourses();
+        return numberOfCoursesInTerm;
     }
 
     void printCourses() {
-        for (int i = 0; i < coursesInTerm.size(); i++){
+        for (int i = 0; i < coursesInTerm.size(); i++)
             System.out.println(coursesInTerm.get(i).getName());
-        }
+    }
+
+    public String getTeacherName() {
+        return teacherName;
     }
 }
