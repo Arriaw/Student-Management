@@ -1,3 +1,9 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+/.gitignore
+/misc.xml
+/modules.xml
+/vcs.xml
+/ArKa.iml
+/miniP/*.class
