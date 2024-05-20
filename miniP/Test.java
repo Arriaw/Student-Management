@@ -1,3 +1,5 @@
+package miniP;
+
 public class Test {
     public static void main(String[] args) {
         Course c1 = new Course("Advanced Programming", 3, "2024-06-20");

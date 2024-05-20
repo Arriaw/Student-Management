@@ -1,3 +1,4 @@
+package miniP;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,8 +217,8 @@ public class Main {
                             
 
                             System.out.print("Are you sure to remove the teacher ! ");
-                            ((Course) spCourse.toArray()[0]).setTeacher(null); 
-                            
+//                            ((Course) spCourse.toArray()[0]).setTeacher(null);
+                            //test kiarash
                             String sure = input.nextLine(); 
 
                             if(sure.equals("yes")){
