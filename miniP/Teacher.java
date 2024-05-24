@@ -1,16 +1,42 @@
 package miniP;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class Teacher {
-    private String teacherName;
+import java.io.Serializable;
+import java.util.*;
+import java.time.LocalDate;
+
+
+
+public class Teacher implements Serializable {
+
+    private final String Id;
+    private final String teacherName;
+    private final String teacherId;
     private int numberOfCoursesInTerm;
     private List<Course> coursesInTerm = new ArrayList<>();
+    private final String Username;
+    private final String Password;
 
-    public Teacher(String name) {
+
+    public Teacher(String name, String id, int countTeacher) {
         this.teacherName = name;
+        this.Id = id;
+        Random random = new Random();
+        teacherId = LocalDate.now().getYear() + "" +  (random.nextInt(900) + 100) + "" + String.format("%02d",countTeacher);
+
+        Username = teacherId;
+        Password = Id;
     }
+
+    public String getPasswordHash(){
+        return Admin.getSha256(Password);
+    }
+
+    public String getId(){
+        return Id;
+    }
+
+
 
     void addCourse(Course course) {
         coursesInTerm.add(course);
@@ -18,12 +44,12 @@ public class Teacher {
     
     void addStudent(Student student, Course course) {
         boolean flag = false;
-        for (int i = 0; i < coursesInTerm.size(); i++)
-            if (course == coursesInTerm.get(i)){
+        for (Course value : coursesInTerm)
+            if (course == value) {
                 flag = true;
                 break;
             }
-        if (flag == false){
+        if (!flag){
             System.out.println("This teacher doesn't have this course.");
             return;
         }
@@ -34,12 +60,12 @@ public class Teacher {
                 flag = true;
                 break;
             }
-        if (flag2 == true){
+        if (flag2){
             System.out.println("This student is already in the course.");
             return;
         }
 
-        if (flag == true && flag2 == false) {
+        if (flag && !flag2) {
             course.addStudent(student);
             student.addCourse(course);
         }
@@ -135,5 +161,9 @@ public class Teacher {
 
     public String getTeacherName() {
         return teacherName;
+    }
+
+    public String getUsername() {
+        return Username;
     }
 }

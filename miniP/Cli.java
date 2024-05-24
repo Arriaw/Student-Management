@@ -1,38 +1,153 @@
 package miniP;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Cli {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\033[H\033[2J");
-        System.out.flush();
+        clear();
         System.out.println("|----------------Welcome----------------|");
         System.out.print("""
                 Which one is your role:
 
                     1.Admin
                     2.Teacher
-                                        
+                
                 :""");
+
+        boolean teacherCreated = false;
+
         while (true) {
+
+
+
+
             boolean flag = false;
             int input = scanner.nextInt();
+
             switch (input) {
+
                 case 1:
-                    //TODO
+                    Admin admin = Admin.getInstance();
+                    clear();
+                    System.out.println("Please choose: ");
+                    System.out.print("""
+                        
+                        1.Add new teacher
+                        2.Remove teacher
+                        3.Add new assignments
+                        4.Remove an assignment
+                        5.Add new student
+                        6.Remove a student
+                        7.Show Teachers
+                        8.Exit
+                        
+                        :""");
+
+                    boolean flagAdmin = false;
+
+                    int choice = scanner.nextInt();
+
+
+                    while(true) {
+
+
+
+//                        if (teacherCreated) clear();
+//                        teacherCreated = false;
+
+                        if (flagAdmin || teacherCreated) {
+
+                            System.out.println("Please choose: ");
+
+                            System.out.print("""
+                                
+                                1.Add new teacher
+                                2.Remove teacher
+                                3.Add new assignments
+                                4.Remove an assignment
+                                5.Add new student
+                                6.remove a student
+                                7.Show Teachers
+                                8.Exit
+                                
+                                :""");
+                            }
+                        if (flagAdmin || teacherCreated) choice = scanner.nextInt();
+
+                        flagAdmin = false;
+
+                        switch (choice){
+                            case 1:
+
+                                clear();
+                                scanner.nextLine();
+                                System.out.print("Enter name: ");
+                                String name = scanner.nextLine();
+
+                                System.out.println();
+                                System.out.print("Enter your ID: ");
+                                String Id = scanner.nextLine();
+                                System.out.println();
+                                if(admin.addTeacher(name, Id)){
+                                    teacherCreated = true;
+                                    System.out.printf("Teacher %s was created successfully!%n", name);
+                                }
+
+
+                                continue ;
+                            case 2:
+                                admin.setTeacherCount(4);
+                                System.out.println(Admin.getTeacherCount());
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                            case 5:
+                                break;
+                            case 6:
+                                break;
+                            case 7:
+
+                                ArrayList<Teacher> teachers = admin.retrieveTeachers();
+                                for(Teacher teacher: teachers){
+                                    System.out.println(teacher.getTeacherName());
+                                }
+
+                                continue;
+
+                            case 8:
+                                break;
+
+                            default:
+                                flagAdmin = true;
+                                clear();
+                                System.out.println("Invalid option!");
+                        }
+                        if (!flagAdmin){
+                            break;
+                        }
+
+
+                    }
+
+
                     break;
                 case 2:
                     //TODO
                     break;
                 default:
+                    clear();
                     System.out.println("Invalid input.");
                     System.out.print("""
                         Which one is your role:
 
                             1.Admin
                             2.Teacher
-                            
+                        
                         :""");
                     flag = true;
                     break;
@@ -58,14 +173,16 @@ public class Cli {
         Teacher teacher = null;
         System.out.println("----------------Greeting " + teacher.getTeacherName() + "----------------");
         System.out.println("What do you want to do ?");
-        System.out.println("""
-                    1.
-                    2.
-                    3.
-                    4.
-                    5.
-                    6.
-                    """);
+        System.out.print("""
+                    
+                        1.Add new teacher
+                        2.Remove teacher
+                        3.Add new assignments
+                        4.Remove an assignment
+                        5.Add new student
+                        6.remove a student
+                    
+                    :""");
         while (true) {
             boolean flag = false;
             int input = scanner.nextInt();
@@ -90,14 +207,16 @@ public class Cli {
                     break;
                 default:
                     System.out.println("Invalid input.");
-                    System.out.println("""
-                            1.
-                            2.
-                            3.
-                            4.
-                            5.
-                            6.
-                            """);
+                    System.out.print("""
+                            
+                            1.Add new teacher
+                            2.Remove teacher
+                            3.Add new assignments
+                            4.Remove an assignment
+                            5.Add new student
+                            6.remove a student
+                            
+                            :""");
                     flag = true;
                     break;
             }
@@ -105,4 +224,9 @@ public class Cli {
                 break;
         }
     }
+    public static void clear(){
+        System.out.println("\033[H\033[2J");
+        System.out.flush();
+    }
+
 }

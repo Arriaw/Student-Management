@@ -60,9 +60,9 @@ public class Main {
                     1.Admin
 
                     2.Teacher
-                    
+                
                     3.Student
-                    
+                
                 :""");
 
         
@@ -79,12 +79,17 @@ public class Main {
                     System.out.println("""
 
                         1.Add new teacher
-                        2.Remove teacher 
-                        3.Add new assignments 
-                        4.Remove an assignment 
+                        2.Remove teacher
+                        3.Add new assignments
+                        4.Remove an assignment
                         5.Add new student
-                        6.remove a student
+                        6.remove a student  
+                        7.Add Course
+                        8.Remove Course
+
                         """);
+
+
                         int userSelect = input.nextInt();
 
             out : while(true){
