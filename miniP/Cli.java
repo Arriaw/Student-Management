@@ -4,36 +4,36 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Cli {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        clear();
-        System.out.println("|----------------Welcome----------------|");
-        System.out.print("""
-                Which one is your role:
-
-                    1.Admin
-                    2.Teacher
-                
-                :""");
-
+        menu();
         boolean teacherCreated = false;
-
         while (true) {
-
-
-
-
             boolean flag = false;
             int input = scanner.nextInt();
-
             switch (input) {
-
                 case 1:
-                    Admin admin = Admin.getInstance();
-                    clear();
-                    System.out.println("Please choose: ");
-                    System.out.print("""
+                    adminCli(scanner, teacherCreated);
+                    break;
+                case 2:
+                    teacherCli();
+                    break;
+                default:
+                    menu();
+                    flag = true;
+                    break;
+            }
+            if (!flag)
+                break;
+        }
+        scanner.close();
+    }
+
+    static void adminCli(Scanner scanner, boolean teacherCreated) {
+        Admin admin = Admin.getInstance();
+        clear();
+        System.out.println("Please choose: ");
+        System.out.print("""
                         
                         1.Add new teacher
                         2.Remove teacher
@@ -44,25 +44,14 @@ public class Cli {
                         7.Show Teachers
                         8.Exit
                         
-                        :""");
+                        : """);
 
-                    boolean flagAdmin = false;
-
-                    int choice = scanner.nextInt();
-
-
-                    while(true) {
-
-
-
-//                        if (teacherCreated) clear();
-//                        teacherCreated = false;
-
-                        if (flagAdmin || teacherCreated) {
-
-                            System.out.println("Please choose: ");
-
-                            System.out.print("""
+        boolean flagAdmin = false;
+        int choice = scanner.nextInt();
+        while(true) {
+            if (flagAdmin || teacherCreated) {
+                System.out.println("Please choose: ");
+                System.out.print("""
                                 
                                 1.Add new teacher
                                 2.Remove teacher
@@ -74,91 +63,59 @@ public class Cli {
                                 8.Exit
                                 
                                 :""");
-                            }
-                        if (flagAdmin || teacherCreated) choice = scanner.nextInt();
+            }
+            if (flagAdmin || teacherCreated)
+                choice = scanner.nextInt();
 
-                        flagAdmin = false;
-
-                        switch (choice){
-                            case 1:
-
-                                clear();
-                                scanner.nextLine();
-                                System.out.print("Enter name: ");
-                                String name = scanner.nextLine();
-
-                                System.out.println();
-                                System.out.print("Enter your ID: ");
-                                String Id = scanner.nextLine();
-                                System.out.println();
-                                if(admin.addTeacher(name, Id)){
-                                    teacherCreated = true;
-                                    System.out.printf("Teacher %s was created successfully!%n", name);
-                                }
-
-
-                                continue ;
-                            case 2:
-                                admin.setTeacherCount(4);
-                                System.out.println(Admin.getTeacherCount());
-                                break;
-                            case 3:
-                                break;
-                            case 4:
-                                break;
-                            case 5:
-                                break;
-                            case 6:
-                                break;
-                            case 7:
-
-                                ArrayList<Teacher> teachers = admin.retrieveTeachers();
-                                for(Teacher teacher: teachers){
-                                    System.out.println(teacher.getTeacherName());
-                                }
-
-                                continue;
-
-                            case 8:
-                                break;
-
-                            default:
-                                flagAdmin = true;
-                                clear();
-                                System.out.println("Invalid option!");
-                        }
-                        if (!flagAdmin){
-                            break;
-                        }
-
-
+            flagAdmin = false;
+            switch (choice){
+                case 1:
+                    clear();
+                    scanner.nextLine();
+                    System.out.print("Enter name: ");
+                    String name = scanner.nextLine();
+                    System.out.println();
+                    System.out.print("Enter ID: ");
+                    String Id = scanner.nextLine();
+                    System.out.println();
+                    if(admin.addTeacher(name, Id)){
+                        teacherCreated = true;
+                        System.out.printf("Teacher %s was added successfully!\n", name);
                     }
 
-
-                    break;
+                    continue ;
                 case 2:
-                    //TODO
+                    admin.setTeacherCount(4);
+                    System.out.println(Admin.getTeacherCount());
                     break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    ArrayList<Teacher> teachers = admin.retrieveTeachers();
+                    for(Teacher teacher: teachers){
+                        System.out.println(teacher.getTeacherName());
+                    }
+
+                    continue;
+                case 8:
+                    break;
+
                 default:
+                    flagAdmin = true;
                     clear();
-                    System.out.println("Invalid input.");
-                    System.out.print("""
-                        Which one is your role:
-
-                            1.Admin
-                            2.Teacher
-                        
-                        :""");
-                    flag = true;
-                    break;
+                    System.out.println("Invalid option!");
             }
-            if (flag == false)
+            if (!flagAdmin){
                 break;
+            }
         }
-        scanner.close();
     }
-
-
     static void teacherCli() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\033[H\033[2J");
@@ -224,9 +181,20 @@ public class Cli {
                 break;
         }
     }
-    public static void clear(){
+
+    public  static  void menu() {
+        clear();
+        System.out.println("|----------------Welcome----------------|");
+        System.out.print("""
+                Which one is your role:
+
+                    1.Admin
+                    2.Teacher
+                
+                :""");
+    }
+    public static void clear() {
         System.out.println("\033[H\033[2J");
         System.out.flush();
     }
-
 }

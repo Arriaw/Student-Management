@@ -9,18 +9,16 @@ import java.util.regex.Pattern;
 
 public class Admin {
     private static Admin admin;
-
     private Admin(){}
 
-    public static Admin getInstance(){
+    public static Admin getInstance() {
         if (admin == null){
             admin  = new Admin();
         }
         return admin;
-
     }
 
-    public static String  getSha256(String pass){
+    public static String  getSha256(String pass) {
         try {
             MessageDigest msg =  MessageDigest.getInstance("SHA-256");
             byte[] bytes = msg.digest(pass.getBytes());
@@ -44,21 +42,17 @@ public class Admin {
         System.out.println("""
                 
                     1. Login
-                
                     2. Logout
                 
                 """);
         boolean flag = false;
-
         Scanner input = new Scanner(System.in);
 
 
         while(true){
-
             if (flag){
                 option = input.nextLine();
             }
-
             flag = false;
 
             String password = "b0b43848cd45d81f2fab9252f57408c3b1d10c3028521a65fa16a398b96c18b8";
@@ -66,13 +60,11 @@ public class Admin {
 
                 case "Login":
                     String pass = input.nextLine();
-                    if (password.equals(getSha256(pass)) ) return true;
-                    return false;
+                    return password.equals(getSha256(pass));
 
                 case "Logout":
                     System.out.println("Are you sure ?");
-                    if(input.nextLine().equals("yes") | input.nextLine().equals("Yes") | input.nextLine().equals("YES")) return true;
-                    return false;
+                    return input.nextLine().equals("yes") | input.nextLine().equals("Yes") | input.nextLine().equals("YES");
 
                 default:
                     flag = true;
@@ -95,30 +87,23 @@ public class Admin {
         return flag;
     }
 
-    public static void  clear(){
-        System.out.println("\033[H\033[2J");
-        System.out.flush();
-    }
-
     public boolean addTeacher(String name, String Id){
-
         boolean exist = false;
         ArrayList<Teacher> teachers = retrieveTeachers();
         int teacherCount = getTeacherCount();
         Teacher teacher = new Teacher(name, Id, teacherCount);
 
-        if(teachers != null) {
+        if(teachers != null)
             exist = teachers.stream().anyMatch(tea -> tea.getId().equals(teacher.getId()));
-        }
 
-        if(!exist){
+
+        if(!exist)
            if(saveTeacher(teacher)) {
                setTeacherCount(teacherCount + 1);
                return true;
            }
-        }else{
+        else
             return false;
-        }
 
         return false;
     }
@@ -165,7 +150,7 @@ public class Admin {
                 return false;
             }
         }
-        }
+    }
 
     public void setTeacherCount(int count){
         try(BufferedReader reader = new BufferedReader(new FileReader("./Files/TeacherData.txt"))){
@@ -206,29 +191,29 @@ public class Admin {
     }
 
     public ArrayList<Teacher> retrieveTeachers() {
-
-        if(getTeacherCount() == 0) return null;
-
         ArrayList<Teacher> teachers = new ArrayList<>();
         try (FileInputStream f = new FileInputStream("./Files/Teachers.txt");
              ObjectInputStream in = new ObjectInputStream(f)) {
 
-
             while (true) {
                 try {
-
                     Teacher t = (Teacher) in.readObject();
                     teachers.add(t);
-
                 } catch (IOException e) {
                     break;
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
+                    break;
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error reading teacher data!", e);
         }
         return teachers;
     }
+
+    public static void  clear(){
+        System.out.println("\033[H\033[2J");
+        System.out.flush();
     }
+}

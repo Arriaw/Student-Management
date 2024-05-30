@@ -5,16 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3197441-5336-4081-9b3b-1307ce9ebcb1" name="Changes" comment="I've added some files for IntelliJ">
-      <change afterPath="$PROJECT_DIR$/Files/TeacherData.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/miniP/AppendableObjectOutputStream.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/TeacherData.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Files/TeacherData.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/Teachers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Files/Teachers.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Assignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Assignment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Cli.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Cli.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Student.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Teacher.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Teacher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/Files/TeacherData.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/Files/TeacherData.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Admin.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Admin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/AppendableObjectOutputStream.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/AppendableObjectOutputStream.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Assignment$AppendableObjectOutputStream.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Assignment$AppendableObjectOutputStream.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Assignment.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Assignment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Cli.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Cli.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Course.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Course.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Student.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Student.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Teacher.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Teacher.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +84,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/kiarash/IdeaProjects/untitled1",
+    "last_opened_file_path": "/home/aria/Code/AP",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -97,6 +105,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-78a6f59c" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

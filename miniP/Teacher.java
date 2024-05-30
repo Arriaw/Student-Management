@@ -166,4 +166,9 @@ public class Teacher implements Serializable {
     public String getUsername() {
         return Username;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Teacher{%s, %s}", teacherName, teacherId);
+    }
 }
