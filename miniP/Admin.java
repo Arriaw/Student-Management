@@ -9,16 +9,18 @@ import java.util.regex.Pattern;
 
 public class Admin {
     private static Admin admin;
+
     private Admin(){}
 
-    public static Admin getInstance() {
+    public static Admin getInstance(){
         if (admin == null){
             admin  = new Admin();
         }
         return admin;
+
     }
 
-    public static String  getSha256(String pass) {
+    public static String  getSha256(String pass){
         try {
             MessageDigest msg =  MessageDigest.getInstance("SHA-256");
             byte[] bytes = msg.digest(pass.getBytes());
@@ -42,17 +44,21 @@ public class Admin {
         System.out.println("""
                 
                     1. Login
+                
                     2. Logout
                 
                 """);
         boolean flag = false;
+
         Scanner input = new Scanner(System.in);
 
 
         while(true){
+
             if (flag){
                 option = input.nextLine();
             }
+
             flag = false;
 
             String password = "b0b43848cd45d81f2fab9252f57408c3b1d10c3028521a65fa16a398b96c18b8";
@@ -60,11 +66,13 @@ public class Admin {
 
                 case "Login":
                     String pass = input.nextLine();
-                    return password.equals(getSha256(pass));
+                    if (password.equals(getSha256(pass)) ) return true;
+                    return false;
 
                 case "Logout":
                     System.out.println("Are you sure ?");
-                    return input.nextLine().equals("yes") | input.nextLine().equals("Yes") | input.nextLine().equals("YES");
+                    if(input.nextLine().equals("yes") | input.nextLine().equals("Yes") | input.nextLine().equals("YES")) return true;
+                    return false;
 
                 default:
                     flag = true;
@@ -87,119 +95,63 @@ public class Admin {
         return flag;
     }
 
-    public boolean addTeacher(String name, String Id){
-        boolean exist = false;
-        ArrayList<Teacher> teachers = retrieveTeachers();
-        int teacherCount = getTeacherCount();
-        Teacher teacher = new Teacher(name, Id, teacherCount);
+    public static boolean addTeacher(Teacher teacher) {
+        boolean fileExists = new File("Files/Teachers.txt").exists();
 
-        if(teachers != null)
-            exist = teachers.stream().anyMatch(tea -> tea.getId().equals(teacher.getId()));
-
-
-        if(!exist)
-           if(saveTeacher(teacher)) {
-               setTeacherCount(teacherCount + 1);
-               return true;
-           }
-        else
+        try (FileOutputStream fileOutputStream = new FileOutputStream("Files/Teachers.txt", true);
+             ObjectOutputStream objectOutputStream = fileExists ?
+                     new AppendableObjectOutputStream(fileOutputStream) :
+                     new ObjectOutputStream(fileOutputStream)) {
+            ArrayList<Teacher> teachers = Admin.retrieveTeachers();
+            if (teachers.contains(teacher)) {
+                System.out.println("Teacher is already added.");
+                return false;
+            }
+            objectOutputStream.writeObject(teacher);
+        } catch (IOException e) {
+            e.printStackTrace();
             return false;
+        }
 
-        return false;
+        return true;
     }
 
-    public static int getTeacherCount(){
-        try(RandomAccessFile raf = new RandomAccessFile("./Files/TeacherData.txt", "r");) {
-
-            String line;
-            int teacherCount = 0;
-
-            Pattern pt = Pattern.compile("teacherCount :(\\d+)");
-
-            while((line = raf.readLine()) != null){
-                Matcher mt = pt.matcher(line);
-                if(mt.matches()){
-                    teacherCount = Integer.parseInt(line.split(":")[1]);
-                }
+    public static boolean removeTeacher(Teacher teacher) {
+        ArrayList<Teacher> teachers = Admin.retrieveTeachers();
+        boolean flag = false;
+        for (Teacher t : teachers) {
+            if (t.getTeacherName().equals(teacher.getTeacherName())
+                && t.getID().equals(teacher.getID()) && t.getPassword().equals(teacher.getPassword())) {
+                flag = true;
+                teachers.remove(t);
+                break;
             }
-            return teacherCount;
+        }
+        if (!flag) {
+            System.out.println("There is no teacher with this data.");
+            return false;
+        }
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream("Files/Teachers.txt");
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+            for (Teacher p : teachers) {
+                objectOutputStream.writeObject(p);
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+
+        return true;
     }
-
-
-    public boolean saveTeacher(Teacher teacher){
-        if (getTeacherCount() == 0) {
-            try (FileOutputStream f = new FileOutputStream("./Files/Teachers.txt");
-                 ObjectOutputStream out = new ObjectOutputStream(f)) {
-
-                out.writeObject(teacher);
-
-                return true;
-            } catch (IOException e) {
-                return false;
-            }
-
-        }else{
-            try(FileOutputStream f = new FileOutputStream("./Files/Teachers.txt", true);
-                AppendableObjectOutputStream out = new AppendableObjectOutputStream(f)) {
-                out.writeObject(teacher);
-                return true;
-            } catch (IOException e) {
-                return false;
-            }
-        }
-    }
-
-    public void setTeacherCount(int count){
-        try(BufferedReader reader = new BufferedReader(new FileReader("./Files/TeacherData.txt"))){
-            String line;
-            Pattern pt = Pattern.compile("teacherCount :(\\d+)");
-            while((line = reader.readLine()) != null){
-                Matcher mt = pt.matcher(line);
-                if(mt.matches()){
-                    line = line.split(":")[0] + ":" + count;
-                }
-
-                FileWriter fileWriter = new FileWriter("./Files/tmp.txt", true);
-                fileWriter.write(line + "\n");
-                fileWriter.close();
-
-            }
-
-            PrintWriter printWriter = new PrintWriter("./Files/TeacherData.txt");
-            printWriter.print("");
-            printWriter.close();
-
-
-            BufferedReader reader2 = new BufferedReader(new FileReader("./Files/tmp.txt"));
-            while ((line = reader2.readLine()) != null){
-                FileWriter writer = new FileWriter("./Files/TeacherData.txt");
-                writer.write(line);
-                writer.close();
-            }
-
-
-            FileWriter fileWriter = new FileWriter("./Files/tmp.txt");
-            fileWriter.write("");
-            fileWriter.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ArrayList<Teacher> retrieveTeachers() {
+    public static ArrayList<Teacher> retrieveTeachers() {
         ArrayList<Teacher> teachers = new ArrayList<>();
-        try (FileInputStream f = new FileInputStream("./Files/Teachers.txt");
-             ObjectInputStream in = new ObjectInputStream(f)) {
-
+        try (FileInputStream fileInputStream = new FileInputStream("Files/Teachers.txt");
+             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             while (true) {
                 try {
-                    Teacher t = (Teacher) in.readObject();
+                    Teacher t = (Teacher) objectInputStream.readObject();
                     teachers.add(t);
-                } catch (IOException e) {
+                } catch (EOFException e) {
                     break;
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -207,7 +159,7 @@ public class Admin {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error reading teacher data!", e);
+            e.printStackTrace();
         }
         return teachers;
     }

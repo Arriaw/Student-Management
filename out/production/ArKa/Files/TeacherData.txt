@@ -1,1 +1,0 @@
-teacherCount :2
