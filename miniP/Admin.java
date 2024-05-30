@@ -95,19 +95,37 @@ public class Admin {
         return flag;
     }
 
-    public static boolean addTeacher(Teacher teacher) {
-        boolean fileExists = new File("Files/Teachers.txt").exists();
+    public static <T extends Serializable> boolean addData(T data) {
+        String filename = "Files/" + data.getClass().getSimpleName() + "s.txt";
+        boolean fileExists = new File(filename).exists();
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream("Files/Teachers.txt", true);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename, true);
              ObjectOutputStream objectOutputStream = fileExists ?
                      new AppendableObjectOutputStream(fileOutputStream) :
                      new ObjectOutputStream(fileOutputStream)) {
-            ArrayList<Teacher> teachers = Admin.retrieveTeachers();
-            if (teachers.contains(teacher)) {
-                System.out.println("Teacher is already added.");
-                return false;
+            ArrayList<T> objects = (ArrayList<T>) Admin.retrieveData(data.getClass());
+            boolean flag = false;
+            if (data instanceof Teacher) {
+                ArrayList<Teacher> teachers = (ArrayList<Teacher>) objects;
+                Teacher teacher = (Teacher) data;
+                for (Teacher t : teachers) {
+                    if (t.getTeacherName().equals(teacher.getTeacherName())
+                            && t.getID().equals(teacher.getID())) {
+                        flag = true;
+                        teachers.remove(t);
+                        break;
+                    }
+                    if (t.getID().equals(teacher.getID())) {
+                        System.out.println("ID is already taken by another teacher.");
+                        return false;
+                    }
+                }
+                if (flag) {
+                    System.out.println("Teacher is already added.");
+                    return false;
+                }
             }
-            objectOutputStream.writeObject(teacher);
+            objectOutputStream.writeObject(data);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -116,41 +134,63 @@ public class Admin {
         return true;
     }
 
-    public static boolean removeTeacher(Teacher teacher) {
-        ArrayList<Teacher> teachers = Admin.retrieveTeachers();
+    public static <T extends Serializable> boolean removeData(T data) {
+        ArrayList<T> objects = (ArrayList<T>) Admin.retrieveData(data.getClass());
         boolean flag = false;
-        for (Teacher t : teachers) {
-            if (t.getTeacherName().equals(teacher.getTeacherName())
-                && t.getID().equals(teacher.getID()) && t.getPassword().equals(teacher.getPassword())) {
-                flag = true;
-                teachers.remove(t);
-                break;
+
+        if (data instanceof Teacher teacher) {
+            for (T obj : objects) {
+                Teacher t = (Teacher) obj;
+                if (t.getTeacherName().equals(teacher.getTeacherName())
+                        && t.getID().equals(teacher.getID())
+                        && t.getPassword().equals(teacher.getPassword())) {
+                    flag = true;
+                    objects.remove(t);
+                    break;
+                }
             }
         }
-        if (!flag) {
-            System.out.println("There is no teacher with this data.");
-            return false;
+        else if (data instanceof Course course) {
+            for (T obj : objects) {
+                Course c = (Course) obj;
+                if (c.getName().equals(course.getName())
+                        && c.getID().equals(course.getID())) {
+                    flag = true;
+                    objects.remove(c);
+                    break;
+                }
+            }
         }
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream("Files/Teachers.txt");
+        if (!flag) {
+            System.out.println("There is no " + data.getClass().getSimpleName().toLowerCase() + " with this data.");
+            return false;
+        }
+        String filename = "Files/" + data.getClass().getSimpleName() + "s.txt";
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
-            for (Teacher p : teachers) {
-                objectOutputStream.writeObject(p);
+            for (T obj : objects) {
+                objectOutputStream.writeObject(obj);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
         return true;
     }
-    public static ArrayList<Teacher> retrieveTeachers() {
-        ArrayList<Teacher> teachers = new ArrayList<>();
-        try (FileInputStream fileInputStream = new FileInputStream("Files/Teachers.txt");
+    public static <T extends Serializable>ArrayList<T> retrieveData(Class<T> clazz) {
+        ArrayList<T> data = new ArrayList<>();
+        String filename = "Files/" + clazz.getSimpleName() + "s.txt";
+        if (!(new File(filename)).exists())
+            return data;
+        try (FileInputStream fileInputStream = new FileInputStream(filename);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             while (true) {
                 try {
-                    Teacher t = (Teacher) objectInputStream.readObject();
-                    teachers.add(t);
+                    T obj = (T) objectInputStream.readObject();
+                    data.add(obj);
                 } catch (EOFException e) {
                     break;
                 } catch (ClassNotFoundException e) {
@@ -161,7 +201,8 @@ public class Admin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return teachers;
+
+        return data;
     }
 
     public static void  clear(){

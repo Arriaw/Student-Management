@@ -1,5 +1,6 @@
 package miniP;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Course {
+public class Course implements Serializable {
+    private String ID;
     private int unit;
     private String name;
     private Teacher teacher;
@@ -20,11 +22,17 @@ public class Course {
     private int assignmentsCount;
     private LocalDate examDate;
     private List<Assignment> activAssignments;
-
-    public Course(String name, int unit, String examDate) {
+    private static final long serialVersionUID = -2218181545098944410L;
+    public Course(String name, int unit, String examDate, String ID) {
         this.name = name;
         this.unit = unit;
         this.examDate = LocalDate.parse(examDate);
+        this.ID = ID;
+    }
+
+    public Course(String name, String id) {
+        this.name = name;
+        ID = id;
     }
 
     void printStudents() {
@@ -124,5 +132,9 @@ public class Course {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public String getID() {
+        return ID;
     }
 }

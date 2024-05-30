@@ -40,12 +40,13 @@ public class Cli {
                             
                             1.Add new teacher
                             2.Remove teacher
-                            3.Add new assignments
-                            4.Remove an assignment
+                            3.Add new course
+                            4.Remove a course
                             5.Add new student
                             6.Remove a student
                             7.Show Teachers
-                            8.Exit
+                            8.Show Courses
+                            9.Exit
                             
                             :""");
             int choice = scanner.nextInt();
@@ -59,38 +60,65 @@ public class Cli {
                     System.out.print("Enter ID: ");
                     String Id = scanner.nextLine();
                     System.out.println();
-                    Teacher teacher = new Teacher(name, Id, Admin.retrieveTeachers().size());
-                    if(Admin.addTeacher(teacher))
+                    Teacher teacher = new Teacher(name, Id, Admin.retrieveData(Teacher.class).size());
+                    if(Admin.addData(teacher))
                         System.out.printf("Teacher %s added successfully!\n", name);
                     break;
                 case 2:
                     clear();
                     scanner.nextLine();
-                    System.out.print("Enter name: ");
+                    System.out.print("Enter teacher name: ");
                     name = scanner.nextLine();
-                    System.out.print("Enter ID: ");
+                    System.out.print("Enter teacher ID: ");
                     Id = scanner.nextLine();
-                    System.out.print("Enter Password: ");
+                    System.out.print("Enter teacher Password: ");
                     String password = scanner.nextLine();
                     teacher = new Teacher(name, Id, password);
-                    if(Admin.removeTeacher(teacher))
+                    if(Admin.removeData(teacher))
                         System.out.printf("Teacher %s removed successfully!\n", name);
                     break;
                 case 3:
+                    clear();
+                    scanner.nextLine();
+                    System.out.println("Enter course name: ");
+                    name = scanner.nextLine();
+                    System.out.println("Enter unit: ");
+                    int unit = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.println("Enter exam date(YYYY-MM-DD): ");
+                    String date = scanner.nextLine();
+                    Course course = new Course(name, unit, date, Integer.toString(Admin.retrieveData(Course.class).size()));
+                    if (Admin.addData(course))
+                        System.out.printf("Course %s added successfully\n", name);
                     break;
                 case 4:
+                    clear();
+                    scanner.nextLine();
+                    System.out.print("Enter course name: ");
+                    name = scanner.nextLine();
+                    System.out.print("Enter course ID: ");
+                    Id = scanner.nextLine();
+                    course = new Course(name, Id);
+                    if(Admin.removeData(course))
+                        System.out.printf("Course %s removed successfully!\n", name);
                     break;
                 case 5:
                     break;
                 case 6:
                     break;
                 case 7:
-                    ArrayList<Teacher> teachers = Admin.retrieveTeachers();
+                    ArrayList<Teacher> teachers = Admin.retrieveData(Teacher.class);
                     for(Teacher t: teachers){
                         System.out.println(t.getTeacherName() + "-" + t.getID() + "-" + t.getPassword());
                     }
                     break;
                 case 8:
+                    ArrayList<Course> courses = Admin.retrieveData(Course.class);
+                    for(Course c: courses){
+                        System.out.println(c.getName() + "-" + c.getID() + "-" + c.getStudentCount());
+                    }
+                    break;
+                case 9:
                     return;
                 default:
                     clear();
@@ -104,7 +132,7 @@ public class Cli {
         System.out.println("Enter your teacher ID: ");
         while (true) {
             String id = scanner.nextLine();
-            ArrayList<Teacher> teachers = null;
+            ArrayList<Teacher> teachers = Admin.retrieveData(Teacher.class);
             boolean flag = false;
             for (Teacher t : teachers) {
                 if (t.getID().equals(id)) {

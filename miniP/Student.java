@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Student {
+public class Student implements Serializable{
     private String studentName;
     private String studentID;
     private int numberOfCourses;
