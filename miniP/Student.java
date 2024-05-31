@@ -1,25 +1,33 @@
 package miniP;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Student implements Serializable{
     private String studentName;
     private String studentID;
+    private String Password;
     private int numberOfCourses;
     private int numberOfUnits;
     private List<Course> courses = new ArrayList<>();
     private Map<Course, Double> coursesScore = new HashMap<>();
     private double averageScore;
 
-    Student(String name, String ID){
+    Student(String name, String ID, int countStudent){
         studentID = ID;
         studentName = name;
+        Random random = new Random();
+        Password = LocalDate.now().getYear() + "" +  (random.nextInt(900) + 100) + "" + String.format("%02d", countStudent);
     }
 
+    Student(String name, String ID, String password) {
+        studentID = ID;
+        studentName = name;
+        Password = password;
+    }
+
+    Student() {}
     void printRecord() {
         System.out.println("Student Record:");
         System.out.println("    Number of courses: " + getNumberOfCourses());
@@ -141,5 +149,9 @@ public class Student implements Serializable{
     public int getNumberOfCourses() {
         updateNumberOfCourses();
         return numberOfCourses;
+    }
+
+    public String getPassword() {
+        return Password;
     }
 }

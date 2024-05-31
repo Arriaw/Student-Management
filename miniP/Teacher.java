@@ -6,9 +6,9 @@ import java.time.LocalDate;
 
 public class Teacher implements Serializable{
 
-    private final String teacherName;
-    private final String ID;
-    private final String Password;
+    private String teacherName;
+    private String ID;
+    private String Password;
     private int numberOfCoursesInTerm;
     private List<Course> coursesInTerm = new ArrayList<>();
     private static final long serialVersionUID = 3333408718653615933L;
@@ -26,6 +26,8 @@ public class Teacher implements Serializable{
         this.ID = id;
         this.Password = password;
     }
+
+    public Teacher() {}
 
     public String getPasswordHash(){
         return Admin.getSha256(Password);

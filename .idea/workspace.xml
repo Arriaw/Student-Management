@@ -5,19 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3197441-5336-4081-9b3b-1307ce9ebcb1" name="Changes" comment="some minor edit on cli">
-      <change afterPath="$PROJECT_DIR$/Files/Courses.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Files/Students.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/Courses.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Files/Courses.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Files/Teachers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Files/Teachers.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Files/tmp.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Admin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Cli.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Cli.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Course.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/miniP/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Student.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/miniP/Teacher.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Teacher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ArKa/Files/Courses.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/Files/Courses.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/ArKa/Files/Teachers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/Files/Teachers.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/Files/tmp.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Admin.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Admin.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Cli.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Cli.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Course.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Course.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Student.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Student.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -74,23 +74,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Application.Cli.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Application.Test.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/aria/Code/AP/ArKa/Files",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Application.Cli.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/aria/Code/AP/ArKa/Files&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Files" />

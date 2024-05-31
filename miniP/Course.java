@@ -35,6 +35,8 @@ public class Course implements Serializable {
         ID = id;
     }
 
+    public Course(){}
+
     void printStudents() {
         for (int i = 0 ; i < students.size(); i++){
             System.out.println(students.get(i).getStudentName());
@@ -136,5 +138,9 @@ public class Course implements Serializable {
 
     public String getID() {
         return ID;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 }
