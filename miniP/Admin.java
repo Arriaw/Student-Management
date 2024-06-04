@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Admin {
     private static Admin admin;
-
     private Admin(){}
 
     public static Admin getInstance(){
@@ -17,7 +14,6 @@ public class Admin {
             admin  = new Admin();
         }
         return admin;
-
     }
 
     public static String  getSha256(String pass){
@@ -49,15 +45,11 @@ public class Admin {
                 
                 """);
         boolean flag = false;
-
         Scanner input = new Scanner(System.in);
 
-
         while(true){
-
-            if (flag){
+            if (flag)
                 option = input.nextLine();
-            }
 
             flag = false;
 
@@ -68,12 +60,10 @@ public class Admin {
                     String pass = input.nextLine();
                     if (password.equals(getSha256(pass)) ) return true;
                     return false;
-
                 case "Logout":
                     System.out.println("Are you sure ?");
                     if(input.nextLine().equals("yes") | input.nextLine().equals("Yes") | input.nextLine().equals("YES")) return true;
                     return false;
-
                 default:
                     flag = true;
                     System.out.println("Invalid option!!");
@@ -86,10 +76,8 @@ public class Admin {
                     """);
             }
 
-            if (!flag){
+            if (!flag)
                 break;
-            }
-
         }
 
         return flag;
@@ -112,7 +100,6 @@ public class Admin {
                     if (t.getTeacherName().equals(teacher.getTeacherName())
                             && t.getID().equals(teacher.getID())) {
                         flag = true;
-                        teachers.remove(t);
                         break;
                     }
                     if (t.getID().equals(teacher.getID())) {
@@ -122,6 +109,44 @@ public class Admin {
                 }
                 if (flag) {
                     System.out.println("Teacher is already added.");
+                    return false;
+                }
+            }
+            else if (data instanceof Student) {
+                ArrayList<Student> students = (ArrayList<Student>) objects;
+                Student student = (Student) data;
+                for (Student s : students) {
+                    if (s.getStudentName().equals(student.getStudentName())
+                            && s.getStudentID().equals(student.getStudentID())) {
+                        flag = true;
+                        break;
+                    }
+                    if (s.getStudentID().equals(student.getStudentID())) {
+                        System.out.println("ID is already taken by another student.");
+                        return false;
+                    }
+                }
+                if (flag) {
+                    System.out.println("Student is already added.");
+                    return false;
+                }
+            }
+            else if (data instanceof Course) {
+                ArrayList<Course> courses = (ArrayList<Course>) objects;
+                Course course = (Course) data;
+                for (Course c : courses) {
+                    if (c.getName().equals(course.getName())
+                            && c.getID().equals(course.getID())) {
+                        flag = true;
+                        break;
+                    }
+                    if (c.getID().equals(course.getID())) {
+                        System.out.println("ID is already taken by another course.");
+                        return false;
+                    }
+                }
+                if (flag) {
+                    System.out.println("Course is already added.");
                     return false;
                 }
             }
@@ -161,6 +186,18 @@ public class Admin {
                 }
             }
         }
+        else if (data instanceof Student student) {
+            for (T obj : objects) {
+                Student s = (Student) obj;
+                if (s.getStudentName().equals(student.getStudentName())
+                        && s.getStudentID().equals(student.getStudentID())
+                        && s.getPassword().equals(student.getPassword())) {
+                    flag = true;
+                    objects.remove(s);
+                    break;
+                }
+            }
+        }
 
         if (!flag) {
             System.out.println("There is no " + data.getClass().getSimpleName().toLowerCase() + " with this data.");
@@ -180,6 +217,67 @@ public class Admin {
 
         return true;
     }
+
+    public static <T extends Serializable> boolean updateData(T newData) {
+        ArrayList<T> objects = (ArrayList<T>) Admin.retrieveData(newData.getClass());
+        boolean flag = false;
+
+        switch (newData) {
+            case Teacher newTeacher -> {
+                for (int i = 0; i < objects.size(); i++) {
+                    Teacher t = (Teacher) objects.get(i);
+                    if (t.getID().equals(newTeacher.getID())) {
+                        objects.set(i, (T) newTeacher);
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            case Student newStudent -> {
+                for (int i = 0; i < objects.size(); i++) {
+                    Student s = (Student) objects.get(i);
+                    if (s.getStudentID().equals(newStudent.getStudentID())) {
+                        objects.set(i, (T) newStudent);
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            case Course newCourse -> {
+                for (int i = 0; i < objects.size(); i++) {
+                    Course c = (Course) objects.get(i);
+                    if (c.getID().equals(newCourse.getID())) {
+                        objects.set(i, (T) newCourse);
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            default -> {
+            }
+        }
+
+        if (!flag) {
+            System.out.println("There is no " + newData.getClass().getSimpleName().toLowerCase() + " with this data to update.");
+            return false;
+        }
+
+        String filename = "Files/" + newData.getClass().getSimpleName() + "s.txt";
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+            for (T obj : objects) {
+                objectOutputStream.writeObject(obj);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
     public static <T extends Serializable>ArrayList<T> retrieveData(Class<T> clazz) {
         ArrayList<T> data = new ArrayList<>();
         String filename = "Files/" + clazz.getSimpleName() + "s.txt";
