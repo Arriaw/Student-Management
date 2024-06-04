@@ -5,20 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3197441-5336-4081-9b3b-1307ce9ebcb1" name="Changes" comment="some minor edit on cli">
-      <change afterPath="$PROJECT_DIR$/Files/Courses.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Files/Teachers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Files/Teachers.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Files/tmp.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Cli.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Cli.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Course.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Course.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniP/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/miniP/Student.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/Files/Teachers.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/Files/Teachers.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/Files/tmp.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Admin.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Admin.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Cli.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Cli.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Course.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Course.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ArKa/miniP/Student.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ArKa/miniP/Student.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,9 +69,9 @@
     "Application.Test.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "app",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/aria/Code/AP/ArKa/Files",
+    "last_opened_file_path": "/home/kiarash/AP/sixth/khata",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -110,13 +97,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-78a6f59c" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
