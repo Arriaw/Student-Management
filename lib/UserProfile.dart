@@ -80,11 +80,27 @@ class _PinkPageState extends State<PinkPage> {
   // }
 
 
+  Future<String> removeAccount() async{
+      String response = '';
+      final serverSocket = await Socket.connect(host, port);
+      serverSocket.write("removeAccount-${widget.userProfile1.sid}");
+      await serverSocket.flush();
+
+      serverSocket.listen((socketResponse) {
+        String response = String.fromCharCodes(socketResponse);
+        serverSocket.destroy();
+
+    });
+    return response;
+
+  }
+
+
   Future<String> changePassword() async {
     String response = '';
     final completer = Completer<String>();
 
-    print("i'm hewre");
+
 
     await Socket.connect(host, port).then((serverSocket) {
       serverSocket.write(
@@ -121,12 +137,13 @@ class _PinkPageState extends State<PinkPage> {
       serverSocket.write("getUserInfo-${widget.userProfile1.sid}\u0000");
       await serverSocket.flush();
 
-      serverSocket.listen((List<int> socketResponse) {
+      serverSocket.listen((socketResponse) {
         print("Data received from server");
         // response = String.fromCharCodes(socketResponse);
         // response = String.fromCharCodes(socketResponse);
 
-        response = Utf8Decoder().convert(socketResponse);
+        // response = Utf8Decoder().convert(socketResponse);
+        response = utf8.decode(socketResponse.sublist(2));
 
         completer.complete(response);
 
@@ -370,9 +387,19 @@ class _PinkPageState extends State<PinkPage> {
                                         onPressed: () async {
                                           String res = await changePassword();
                                            String messageString = '';
-                                          if(res == "200")  messageString = "رمز با موفقیت تغییر کرد";
-                                          if(res == "402") messageString = "!پسورد وارد شده ضعیف است";
-                                          if(res == "401") messageString = "! رمز نادرست می باشد";
+                                           Color colorT = Colors.black;
+                                          if(res == "200"){
+                                            messageString = "رمز با موفقیت تغییر کرد";
+                                            colorT = Colors.green;
+                                          }
+                                          if(res == "402"){
+                                            messageString= "!پسورد وارد شده ضعیف است";
+                                            colorT = Colors.red;
+                                          }
+                                          if(res == "401"){
+                                            messageString = "! رمز نادرست می باشد";
+                                            colorT = Colors.red;
+                                          }
 
 
 
@@ -382,6 +409,9 @@ class _PinkPageState extends State<PinkPage> {
                                               title: const Text(''),
                                               content:  Text(
                                                 messageString,
+                                                style: TextStyle(
+                                                  color: colorT,
+                                                ),
                                               ),
                                               actions: <Widget>[
 
@@ -433,6 +463,8 @@ class _PinkPageState extends State<PinkPage> {
                   left: screenWidth * 0.066,
                   child: ElevatedButton(
                     onPressed: () async {
+                      showremoveAccount(context);
+
                       print("the delete button pressed");
                     },
                     style: ElevatedButton.styleFrom(
@@ -462,6 +494,37 @@ class _PinkPageState extends State<PinkPage> {
   }
 }
 
+void showremoveAccount(BuildContext context){
+  showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('حذف حساب کاربری',
+      textAlign: TextAlign.right,
+      style: TextStyle(
+        fontFamily: 'Bnazanin',
+        color: Colors.redAccent
+      ),),
+      content: const Text(
+        'آیا از حذف حساب کابری خود اطمینان دارید ؟‌',
+        style: TextStyle(
+          fontFamily: "Bnazanin",
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'تایید'),
+          child: const Text('تایید'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'لغو'),
+          child: const Text('لغو'),
+        ),
+      ],
+    ),
+  ).then((returnVal) {
+
+  });
+}
 
 
 

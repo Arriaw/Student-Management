@@ -594,7 +594,7 @@ public class Cli {
                     scanner.nextLine();
                     System.out.print("Enter student name: ");
                     name = scanner.nextLine();
-                    System.out.print("Enter student ID: ");
+                    System.out.print("Enter SID: ");
                     Id = scanner.nextLine();
                     System.out.print("Enter student Password: ");
                     String password = scanner.nextLine();
@@ -609,7 +609,7 @@ public class Cli {
                         break;
                     }
                     for(Student s: students)
-                        System.out.println(s.getStudentName() + "-" + s.getStudentID() + "-" + s.getPassword());
+                        System.out.println(s.getStudentName() + "-" + s.getUsername() + "-" + s.getPassword());
 
                     break;
                 case 4:

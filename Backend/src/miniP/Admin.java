@@ -205,7 +205,7 @@ public class Admin {
                 for (T obj : objects) {
                     Student s = (Student) obj;
                     if (s.getStudentName().equals(student.getStudentName())
-                            && s.getStudentID().equals(student.getStudentID())
+                            && s.getSID().equals(student.getSID())
                             && s.getPassword().equals(student.getPassword())) {
                         flag = true;
                         objects.remove(s);

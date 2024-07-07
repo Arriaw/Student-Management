@@ -94,11 +94,11 @@ class ClientHandler extends Thread{
                     break;
 
                 case "getUserInfo" :
-                    ArrayList<Student> studentsInfo = Admin.retrieveData(Student.class);
+                    students = Admin.retrieveData(Student.class);
                     String sid = queryArr[1];
                     String info = "";
 
-                    for(Student st : studentsInfo){
+                    for(Student st : students){
                         if(st.getSID().equals(sid)){
                             info = st.getStudentName() + "-دانشجو-" + st.getSID() + "-" +st.getCurrentTerm() + '-' + st.getNumberOfUnits() + '-' + st.getAverageScore();
                         }
@@ -113,14 +113,14 @@ class ClientHandler extends Thread{
 
 
                 case "changePassword":
-                    ArrayList<Student>  listStudents = Admin.retrieveData(Student.class);
+                    students = Admin.retrieveData(Student.class);
                     sid = queryArr[1];
                     String passwordUserR = queryArr[2];
                     String newPasswordUserR = queryArr[3];
                     System.out.println(sid + "-" + passwordUserR + "-" + newPasswordUserR);
 
 
-                    for(Student s : listStudents){
+                    for(Student s : students){
                         if(s.getSID().equals(sid)){
                             if(s.getPassword().equals(passwordUserR)){
                                 if(Cli.passwordChecking(newPasswordUserR, s.getUsername())){
@@ -146,6 +146,31 @@ class ClientHandler extends Thread{
 
                     dis.close();
 
+                    break;
+
+
+                case "removeAccount":
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    boolean res = false;
+
+                    for (Student s: students){
+                        if(s.getSID().equals(sid)){
+                            res = Admin.removeData(s);
+                        }
+                    }
+                    if(res) {
+                        dos.writeBytes("200");
+                        dos.close();
+                        System.out.println("200");
+                    }else{
+                        dos.writeBytes("401");
+                        dos.close();
+                        System.out.println("401");
+                    }
+
+                    dis.close();
+                    
                     break;
 
             }
