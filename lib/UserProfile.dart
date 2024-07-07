@@ -58,7 +58,7 @@ class _PinkPageState extends State<PinkPage> {
 
   bool passwordchecking = false;
 
-  String host = "192.168.1.36";
+  String host = "192.168.100.14";
   int port = 8080;
 
   String Specailname = '';
