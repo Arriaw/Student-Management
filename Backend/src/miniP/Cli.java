@@ -3,6 +3,8 @@ package miniP;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.CheckedOutputStream;
 
 public class Cli {
@@ -583,7 +585,7 @@ public class Cli {
                     System.out.println("Enter student ID: ");
                     String Id = scanner.nextLine();
                     System.out.println();
-                    Student student = new Student(name, Id, Admin.retrieveData(Student.class).size());
+                    Student student = new Student(name, Id, Admin.retrieveData(Student.class).size(), Term.بهار۱۴۰۲ـ۱۴۰۳);
                     if(Admin.addData(student))
                         System.out.printf("Student %s added successfully!\n", name);
                     break;
@@ -634,5 +636,25 @@ public class Cli {
     public static void clear() {
         System.out.println("\033[H\033[2J");
         System.out.flush();
+    }
+
+
+    public static boolean passwordChecking(String password, String username){
+
+        if(password.equals(username)){
+            return false;
+        }
+        if(password.length() < 8){
+            return false;
+        }
+        String pat = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$";
+
+        Pattern pt = Pattern.compile(pat);
+        Matcher mt = pt.matcher(password);
+
+        if(mt.matches())
+            return true;
+        else return false;
+
     }
 }

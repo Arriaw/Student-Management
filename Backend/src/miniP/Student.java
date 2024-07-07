@@ -16,13 +16,18 @@ public class Student implements Serializable{
     private double averageScore;
     @Serial
     private static final long serialVersionUID = -6167696272662230747L;
+    private String username = "";
+    private Term currentTerm;
+    private String SID;
 
-
-    Student(String name, String ID, int countStudent){
+    Student(String name, String ID, int countStudent, Term currentTerm){
         studentID = ID;
         studentName = name;
         Random random = new Random();
-        Password = LocalDate.now().getYear() + "" +  (random.nextInt(900) + 100) + "" + String.format("%02d", countStudent);
+        SID = LocalDate.now().getYear() + "" +  (random.nextInt(900) + 100) + "" + String.format("%02d", countStudent);
+        Password = studentID;
+        this.username = SID;
+        this.currentTerm = currentTerm;
     }
 
     Student(String name, String ID, String password) {
@@ -37,9 +42,9 @@ public class Student implements Serializable{
         System.out.println("    Number of courses: " + getNumberOfCourses());
         System.out.println("    Number of Units: " + getNumberOfUnits());
         System.out.println("    Courses Taken:");
-        for (Map.Entry<Course, Double> entry : coursesScore.entrySet()) 
+        for (Map.Entry<Course, Double> entry : coursesScore.entrySet())
             System.out.println("        " + entry.getKey().getName() + ": " + entry.getValue());
-        
+
         System.out.println("    Average Score: " + getAverageScore());
     }
 
@@ -84,10 +89,10 @@ public class Student implements Serializable{
         for (Map.Entry<Course, Double> entry : coursesScore.entrySet())
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
                 maxEntry = entry;
-        
+
         return maxEntry.getKey();
     }
-    
+
     Course worstCourse() {
         if (getNumberOfCourses() == 0)
             return null;
@@ -96,9 +101,9 @@ public class Student implements Serializable{
         for (Map.Entry<Course, Double> entry : coursesScore.entrySet())
             if (minEntry == null || entry.getValue().compareTo(minEntry.getValue()) < 0)
                 minEntry = entry;
-        
+
         return minEntry.getKey();
-    }  
+    }
 
     void addCourse(Course course) {
         courses.add(course);
@@ -112,7 +117,7 @@ public class Student implements Serializable{
         course.removeStudent(this);
     }
 
-    void addScore(Course course, double score) { 
+    void addScore(Course course, double score) {
         coursesScore.put(course, score);
     }
 
@@ -151,7 +156,7 @@ public class Student implements Serializable{
         updateNumberOfUnits();
         return numberOfUnits;
     }
-    
+
     public int getNumberOfCourses() {
         updateNumberOfCourses();
         return numberOfCourses;
@@ -160,4 +165,16 @@ public class Student implements Serializable{
     public String getPassword() {
         return Password;
     }
+
+    public void setPassword(String newPassword){
+        Admin.removeData(this);
+        Password = newPassword;
+        Admin.addData(this);
+    }
+
+    public Term getCurrentTerm(){return currentTerm; }
+
+    public String getUsername(){return username;}
+
+    public String getSID(){return SID;}
 }
