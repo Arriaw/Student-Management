@@ -1,5 +1,6 @@
 package miniP;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,7 +9,7 @@ import java.util.regex.Pattern;
 import java.util.zip.CheckedOutputStream;
 
 public class Cli {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ArrayList<Assignment> assignments = Admin.retrieveData(Assignment.class);
         for (Assignment a : assignments)
             System.out.println(a.getName());
@@ -37,7 +38,7 @@ public class Cli {
         scanner.close();
     }
 
-    static void adminCli(Scanner scanner) {
+    static void adminCli(Scanner scanner) throws IOException {
         clear();
         while(true) {
             System.out.println("\nPlease choose: ");
@@ -397,7 +398,7 @@ public class Cli {
         }
     }
 
-    static void teacherManager(Scanner scanner) {
+    static void teacherManager(Scanner scanner) throws IOException {
         clear();
         while (true) {
             System.out.println("\nPlease choose: ");
@@ -503,7 +504,7 @@ public class Cli {
         }
     }
 
-    static void courseManager(Scanner scanner) {
+    static void courseManager(Scanner scanner) throws IOException {
         clear();
         while (true) {
             System.out.println("\nPlease choose: ");
@@ -563,7 +564,7 @@ public class Cli {
         }
     }
 
-    static void studentManager(Scanner scanner) {
+    static void studentManager(Scanner scanner) throws IOException {
         clear();
         while (true) {
             System.out.println("\nPlease choose: ");
@@ -584,8 +585,10 @@ public class Cli {
                     String name = scanner.nextLine();
                     System.out.println("Enter student ID: ");
                     String Id = scanner.nextLine();
+                    System.out.println("Enter student Image path: ");
+                    String path = scanner.nextLine();
                     System.out.println();
-                    Student student = new Student(name, Id, Admin.retrieveData(Student.class).size(), Term.بهار۱۴۰۲ـ۱۴۰۳);
+                    Student student = new Student(name, Id, Admin.retrieveData(Student.class).size(), Term.بهار۱۴۰۲ـ۱۴۰۳,path);
                     if(Admin.addData(student))
                         System.out.printf("Student %s added successfully!\n", name);
                     break;
@@ -609,7 +612,7 @@ public class Cli {
                         break;
                     }
                     for(Student s: students)
-                        System.out.println(s.getStudentName() + "-" + s.getUsername() + "-" + s.getPassword());
+                        System.out.println(s.getStudentName() + "-" + s.getUsername() + "-" + s.getPassword() + " " + s.getNumberOfUnits2());
 
                     break;
                 case 4:

@@ -80,6 +80,7 @@ class _SignInState extends State<SignIn> {
     String currentTermG = '';
     String vahedG = '';
     String averageG = '';
+    String imagePathG = '';
 
     return MaterialApp(
       home: Scaffold(
@@ -350,7 +351,7 @@ class _SignInState extends State<SignIn> {
                       MaterialPageRoute(builder:
                       (context) => UserProfile(
                         nameS: nameG,
-                        role: roleG, sid: sidG, currentTerm: currentTermG, vahed: vahedG, average: averageG,
+                        role: roleG, sid: sidG, currentTerm: currentTermG, vahed: vahedG, average: averageG, ImagePath: imagePathG,
                       )
                       ),
                     );

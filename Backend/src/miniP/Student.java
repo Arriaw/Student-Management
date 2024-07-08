@@ -1,7 +1,11 @@
 package miniP;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,6 +23,36 @@ public class Student implements Serializable{
     private String username = "";
     private Term currentTerm;
     private String SID;
+    private String Image;
+
+
+
+
+    Student(String name, String ID, int countStudent, Term currentTerm, String path){
+        studentID = ID;
+        studentName = name;
+        Random random = new Random();
+        SID = LocalDate.now().getYear() + "" +  (random.nextInt(900) + 100) + "" + String.format("%02d", countStudent);
+        Password = studentID;
+        this.username = SID;
+        this.currentTerm = currentTerm;
+
+        if(new File(path).exists()){
+            String[] dir = path.split("/");
+            String typeFile = dir[dir.length -1].split("\\.")[1];
+            try {
+                Files.copy(Paths.get(path), Paths.get("Images/" + SID + "." + typeFile));
+                Image = "/Images/" + SID + "." + typeFile;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+            System.out.println("the Image does not exist");
+            Image = "/Images/IconPerson.jpg";
+
+        }
+    }
+
 
     Student(String name, String ID, int countStudent, Term currentTerm){
         studentID = ID;
@@ -28,13 +62,15 @@ public class Student implements Serializable{
         Password = studentID;
         this.username = SID;
         this.currentTerm = currentTerm;
+        Image = "/Images/IconPerson.jpg";
     }
 
-    Student(String name, String ID, String password) {
-        studentID = ID;
+    Student(String name, String SID, String password) {
+        this.SID = SID;
         studentName = name;
         Password = password;
     }
+
 
     Student() {}
     void printRecord() {
@@ -172,9 +208,29 @@ public class Student implements Serializable{
         Admin.addData(this);
     }
 
-    public Term getCurrentTerm(){return currentTerm; }
+    public Term getCurrentTerm(){return currentTerm;}
 
     public String getUsername(){return username;}
 
     public String getSID(){return SID;}
-}
+
+    public String getImage(){return Image;}
+
+    public void setStudentName(String name){studentName =  name;}
+
+    public void setSID(String sid_sp){
+        SID = sid_sp;
+        username = sid_sp;
+    }
+
+    public void setUsername(String us){
+        username = us;
+        setSID(us);
+    }
+
+    public void setNumberOfUnits(int nunit){numberOfUnits = nunit;}
+    public int getNumberOfUnits2(){return numberOfUnits;}
+
+    public void setAverageScore(double avgs){averageScore = avgs;}
+    public double getAverageScore2(){return averageScore;}
+}//             setAverageScore
