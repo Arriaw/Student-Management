@@ -96,7 +96,7 @@ class _TodoListPageState extends State<TodoListPage> {
   void _onBottomNavTapped(int index) {
     setState(() {
       _pageIndex = index;
-      Navigator.push(context, MaterialPageRoute(builder: (context) => _widgetOptions[index]));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => _widgetOptions[index]));
     });
   }
 
@@ -326,7 +326,7 @@ class _TodoListPageState extends State<TodoListPage> {
           alignment: Alignment.centerRight,
           child: Text(
             'کار ها',
-            style: TextStyle(fontFamily: 'Bnazanin', fontSize: 50),
+            style: TextStyle(fontFamily: 'Bnazanin', fontSize: 50, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -358,7 +358,7 @@ class _TodoListPageState extends State<TodoListPage> {
                             padding: EdgeInsets.all(16.0),
                             child: Text(
                               'با به علاوه پایین ، تسک خود را ایجاد کنید.',
-                              style: TextStyle(fontFamily: 'Bnazanin', fontSize: 20),
+                              style: TextStyle(fontFamily: 'Bnazanin', fontSize: 20, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                               textDirection: TextDirection.rtl,
                             ),
@@ -374,9 +374,13 @@ class _TodoListPageState extends State<TodoListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddTaskDialog,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        iconSize: 30,
+        selectedFontSize: 17,
+        unselectedFontSize: 14,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
@@ -400,7 +404,7 @@ class _TodoListPageState extends State<TodoListPage> {
           ),
         ],
         currentIndex: _pageIndex,
-        selectedItemColor: Color.fromRGBO(31, 48, 110, 1),
+        selectedItemColor: const Color.fromRGBO(31, 48, 110, 1),
         unselectedItemColor: Colors.grey,
         onTap: _onBottomNavTapped,
       ),
@@ -425,7 +429,7 @@ class _TodoListPageState extends State<TodoListPage> {
           itemBuilder: (context, index) {
             Task task = tasks[index];
             return Card(
-              elevation: 5,
+              elevation: 7,
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

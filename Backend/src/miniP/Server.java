@@ -258,6 +258,12 @@ class ClientHandler extends Thread {
                     dos.writeUTF("Task deleted successfully");
                     dos.flush();
                     break;
+                case "getClasses":
+                    break;
+                case "addClass":
+                    break;
+                case "getAssignments":
+                    break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

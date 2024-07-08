@@ -14,7 +14,7 @@ class AssignmentsPage extends StatefulWidget {
 class _AssignmentsPage extends State<AssignmentsPage> {
   int _pageIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     AssignmentsPage(),
     NewsPage(),
     ClassesPage(),
@@ -25,7 +25,7 @@ class _AssignmentsPage extends State<AssignmentsPage> {
   void _onBottomNavTapped(int index) {
     setState(() {
       _pageIndex = index;
-      Navigator.push(context,
+      Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => _widgetOptions[index])
       );
     });
@@ -40,11 +40,12 @@ class _AssignmentsPage extends State<AssignmentsPage> {
     return Scaffold(
       appBar: AppBar(
         title:
-        Align(
+        const Align(
           alignment: Alignment.centerRight,
           child: Text('تمرین ها',
-            style: TextStyle(fontSize: 40,
-                fontFamily: 'Lato'),
+            style: TextStyle(fontSize: 50,
+                fontFamily: 'Bnazanin',
+            fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -58,14 +59,19 @@ class _AssignmentsPage extends State<AssignmentsPage> {
 
               child: Text(
                 '‏${f.d} ${f.mN} ${f.y}',
-                style: TextStyle(color: Colors.black54,
-                    fontSize: 17),
+                style: const TextStyle(color: Colors.black54,
+                    fontSize: 22,
+                fontFamily: 'Bnazanin'),
               ),
             ),
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        iconSize: 30,
+        selectedFontSize: 17,
+        unselectedFontSize: 14,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
@@ -89,7 +95,7 @@ class _AssignmentsPage extends State<AssignmentsPage> {
           ),
         ],
         currentIndex: _pageIndex,
-        selectedItemColor: Color.fromRGBO(31, 48, 110, 1),
+        selectedItemColor: const Color.fromRGBO(31, 48, 110, 1),
         unselectedItemColor: Colors.grey,
         onTap: _onBottomNavTapped,
       ),

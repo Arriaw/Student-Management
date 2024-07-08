@@ -25,7 +25,7 @@ class Homepage extends StatefulWidget {
 class _Homepage extends State<Homepage> {
   int _pageIndex = 4;
 
-  static List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     AssignmentsPage(),
     NewsPage(),
     ClassesPage(),
@@ -36,7 +36,7 @@ class _Homepage extends State<Homepage> {
   void _onBottomNavTapped(int index) {
     setState(() {
       _pageIndex = index;
-      Navigator.push(context,
+      Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => _widgetOptions[index])
       );
     });
@@ -47,20 +47,25 @@ class _Homepage extends State<Homepage> {
     return Scaffold(
       appBar: AppBar(
         title:
-        Align(
+        const Align(
           alignment: Alignment.centerRight,
           child: Text('سرا',
-            style: TextStyle(fontSize: 40,
-                fontFamily: 'Lato'),
+            style: TextStyle(fontSize: 50,
+                fontFamily: 'Bnazanin',
+            fontWeight: FontWeight.bold),
           ),
         ),
       ),
-      body: Column(
+      body: const Column(
         children: [
 
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        iconSize: 30,
+        selectedFontSize: 17,
+        unselectedFontSize: 14,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
@@ -84,7 +89,7 @@ class _Homepage extends State<Homepage> {
           ),
         ],
         currentIndex: _pageIndex,
-        selectedItemColor: Color.fromRGBO(31, 48, 110, 1),
+        selectedItemColor: const Color.fromRGBO(31, 48, 110, 1),
         unselectedItemColor: Colors.grey,
         onTap: _onBottomNavTapped,
       ),
