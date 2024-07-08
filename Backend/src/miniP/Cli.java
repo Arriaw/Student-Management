@@ -608,8 +608,11 @@ public class Cli {
                         System.out.println("There is no student in database.");
                         break;
                     }
-                    for(Student s: students)
-                        System.out.println(s.getStudentName() + "-" + s.getUsername() + "-" + s.getPassword());
+                    for(Student s: students) {
+                        System.out.println(s.getStudentName() + "-" + s.getSID() +  "-" + s.getUsername() + "-" + s.getPassword() + "-" + s.getTasks().size());
+                        for (Task t : s.getTasks())
+                            System.out.println(t.serialize());
+                    }
 
                     break;
                 case 4:

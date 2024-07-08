@@ -19,6 +19,7 @@ public class Student implements Serializable{
     private String username = "";
     private Term currentTerm;
     private String SID;
+    private List<Task> tasks = new ArrayList<>();
 
     Student(String name, String ID, int countStudent, Term currentTerm){
         studentID = ID;
@@ -31,7 +32,7 @@ public class Student implements Serializable{
     }
 
     Student(String name, String ID, String password) {
-        studentID = ID;
+        SID = ID;
         studentName = name;
         Password = password;
     }
@@ -177,4 +178,12 @@ public class Student implements Serializable{
     public String getUsername(){return username;}
 
     public String getSID(){return SID;}
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+    }
 }

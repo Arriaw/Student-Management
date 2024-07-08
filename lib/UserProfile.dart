@@ -75,7 +75,7 @@ class _PinkPageState extends State<PinkPage> {
   //   try{
   //     final serverSocket = await Socket.connect(host, port);
   //
-  //     serverSocket.write("changePassword-${}-${}");
+  //     serverSocket.write("changePassword~${}~${}");
   //   }
   // }
 
@@ -83,7 +83,7 @@ class _PinkPageState extends State<PinkPage> {
   Future<String> removeAccount() async{
       String response = '';
       final serverSocket = await Socket.connect(host, port);
-      serverSocket.write("removeAccount-${widget.userProfile1.sid}");
+      serverSocket.write("removeAccount~${widget.userProfile1.sid}");
       await serverSocket.flush();
 
       serverSocket.listen((socketResponse) {
@@ -104,7 +104,7 @@ class _PinkPageState extends State<PinkPage> {
 
     await Socket.connect(host, port).then((serverSocket) {
       serverSocket.write(
-          "changePassword-${widget.userProfile1.sid}-${oldPassword.text}-${newPassword.text}\u0000");
+          "changePassword~${widget.userProfile1.sid}~${oldPassword.text}~${newPassword.text}\u0000");
       serverSocket.flush();
       serverSocket.listen((socketResponse) {
         setState(() {
@@ -134,7 +134,7 @@ class _PinkPageState extends State<PinkPage> {
       final serverSocket = await Socket.connect(host, port);
       print("Connected to server");
 
-      serverSocket.write("getUserInfo-${widget.userProfile1.sid}\u0000");
+      serverSocket.write("getUserInfo~${widget.userProfile1.sid}\u0000");
       await serverSocket.flush();
 
       serverSocket.listen((socketResponse) {
@@ -164,7 +164,7 @@ class _PinkPageState extends State<PinkPage> {
 
 
 
-    List<String> parameters = response.split("-");
+    List<String> parameters = response.split("~");
 
     print("the response is : ${response}");
     setState(() {
