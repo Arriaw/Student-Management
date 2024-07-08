@@ -8,7 +8,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
     public static void main(String[] args) throws IOException {
@@ -55,6 +58,7 @@ class ClientHandler extends Thread{
     DataOutputStream dos;
     DataInputStream dis;
     Socket socket;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
@@ -79,7 +83,7 @@ class ClientHandler extends Thread{
             }
 //            query = dis.readUTF();
             System.out.println(query);
-            String[] queryArr = query.split("-");
+            String[] queryArr = query.split("~");
             System.out.println("the query is : " + query);
 
 
@@ -129,7 +133,7 @@ class ClientHandler extends Thread{
 
                     for(Student st : students){
                         if(st.getSID().equals(sid)){
-                            info = st.getStudentName() + "-دانشجو-" + st.getSID() + "-" +st.getCurrentTerm() + '-' + st.getNumberOfUnits2() + '-' + st.getAverageScore2()  + '-' + st.getImage();
+                            info = st.getStudentName() + "~دانشجو~" + st.getSID() + "~" +st.getCurrentTerm() + '~' + st.getNumberOfUnits2() + '~' + st.getAverageScore2()  + '~' + st.getImage();
                         }
                     }
 //                    System.out.println("the info is : " + info);
@@ -146,7 +150,7 @@ class ClientHandler extends Thread{
                     sid = queryArr[1];
                     String passwordUserR = queryArr[2];
                     String newPasswordUserR = queryArr[3];
-                    System.out.println(sid + "-" + passwordUserR + "-" + newPasswordUserR);
+                    System.out.println(sid + "~" + passwordUserR + "~" + newPasswordUserR);
 
 
                     for(Student s : students){
@@ -193,7 +197,7 @@ class ClientHandler extends Thread{
                         dos.close();
                         System.out.println("200");
                     }else{
-                        dos.writeBytes("401");// failed to remove
+                        dos.writeBytes("401");
                         dos.close();
                         System.out.println("401");
                     }
@@ -240,6 +244,113 @@ class ClientHandler extends Thread{
                     dos.writeBytes("200");
                     dos.close();
                     System.out.println("200");
+                    break;
+
+
+
+                case "getTasks":
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    List<Task> tasks =  new ArrayList<>();
+
+                    try {
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                System.out.println("Student found");
+                                tasks = s.getTasks();
+                                break;
+                            }
+                        }
+
+                        if (tasks.isEmpty()) {
+                            dos.writeBytes("404");
+                            System.out.println("No tasks available for SID: " + sid);
+                        } else {
+                            for (Task t : tasks) {
+                                dos.writeUTF(t.serialize());
+                                System.out.println(t.serialize());
+                            }
+                        }
+
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.err.println("Error handling getTasks request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
+                    break;
+                case "addTask":
+                    sid = queryArr[1];
+                    String taskTitle = queryArr[2];
+                    LocalDateTime dueDate = LocalDateTime.parse(queryArr[3], formatter);
+                    boolean isDone = Boolean.parseBoolean(queryArr[4]);
+                    Task newTask = new Task(taskTitle, dueDate, isDone);
+                    System.out.println(newTask.serialize());
+                    students = Admin.retrieveData(Student.class);
+
+                    for (Student s : students) {
+                        if (s.getSID().equals(sid)) {
+                            s.getTasks().add(newTask);
+                            Admin.updateData(s);
+                            break;
+                        }
+                    }
+
+                    dos.writeUTF("Task added successfully");
+                    dos.flush();
+                    break;
+                case "toggleTask":
+                    sid = queryArr[1];
+                    taskTitle = queryArr[2];
+                    dueDate = LocalDateTime.parse(queryArr[3], formatter);
+                    isDone = Boolean.parseBoolean(queryArr[4]);
+
+                    students = Admin.retrieveData(Student.class);
+
+                    for (Student s : students) {
+                        if (s.getSID().equals(sid)) {
+                            for (Task t : s.getTasks()) {
+                                if (t.getTitle().equals(taskTitle) && t.getDueDate().equals(dueDate)) {
+                                    t.setDone(isDone);
+                                    Admin.updateData(s);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+
+                    dos.writeUTF("Task toggled successfully");
+                    dos.flush();
+                    break;
+                case "deleteTask":
+                    sid = queryArr[1];
+                    taskTitle = queryArr[2];
+                    dueDate = LocalDateTime.parse(queryArr[3], formatter);
+
+                    students = Admin.retrieveData(Student.class);
+
+                    for (Student s : students) {
+                        if (s.getSID().equals(sid)) {
+                            s.getTasks().removeIf(t -> t.getTitle().equals(taskTitle) && t.getDueDate().equals(dueDate));
+                            Admin.updateData(s);
+                            break;
+                        }
+                    }
+
+                    dos.writeUTF("Task deleted successfully");
+                    dos.flush();
+                    break;
+                case "getClasses":
+                    break;
+                case "addClass":
+                    break;
+                case "getAssignments":
                     break;
 
 

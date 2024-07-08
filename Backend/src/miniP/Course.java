@@ -22,6 +22,7 @@ public class Course implements Serializable {
     private int assignmentsCount;
     private LocalDate examDate;
     private List<Assignment> activeAssignments;
+    private Student topStudent;
     private static final long serialVersionUID = -2218181545098944410L;
     public Course(String name, int unit, String examDate, String ID) {
         this.name = name;
@@ -50,7 +51,7 @@ public class Course implements Serializable {
     void printTopStudents() {
         List<Map.Entry<Student, Double>> sortedEntries = new ArrayList<>(studentScores.entrySet());
         sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
-
+        this.topStudent = sortedEntries.getFirst().getKey();
         System.out.println("Top Students in " + name + ":");
         for (int i = 0; i < sortedEntries.size(); i++){
             Map.Entry<Student, Double> entry = sortedEntries.get(i);

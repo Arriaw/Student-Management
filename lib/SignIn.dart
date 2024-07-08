@@ -16,7 +16,7 @@ class _SignInState extends State<SignIn> {
   bool chekcerRun = false;
   String res = '';
   String response = '';
-  String host = '192.168.1.36';
+  String host = '192.168.100.14';
   int port = 8080;
 
   final TextEditingController _usernameController = TextEditingController();
@@ -42,9 +42,9 @@ class _SignInState extends State<SignIn> {
     print("i'm hewre");
     print(_usernameController.text + " " + _passwordController.text);
 
-    await Socket.connect('192.168.1.36',8080).then((serverSocket) {
+    await Socket.connect('192.168.100.14',8080).then((serverSocket) {
       serverSocket.write(
-          "LoginChecker-${_usernameController.text}-${_passwordController
+          "LoginChecker~${_usernameController.text}~${_passwordController
               .text}\u0000");
       serverSocket.flush();
       serverSocket.listen((socketResponse) {
@@ -338,7 +338,7 @@ class _SignInState extends State<SignIn> {
 
                     // String resUserInfo  = await getUserInfo();
                     sidG = _usernameController.text;
-                    // List<String> resList = resUserInfo.split("-");
+                    // List<String> resList = resUserInfo.split("~");
                     // nameG = resList[0];
                     // print("the name is : " + resUserInfo);
                     // roleG = resList[1];

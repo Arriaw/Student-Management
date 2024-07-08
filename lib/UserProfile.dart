@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:arka_project/SignUp.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'SignIn.dart';
+import 'SignUp.dart';
 
 class UserProfile extends StatefulWidget {
   String nameS;
@@ -92,7 +92,7 @@ class _PinkPageState extends State<PinkPage> {
     final completer = Completer<String>();
 
     await Socket.connect(host, port).then((serverSocket) {
-      serverSocket.write("removeAccount-${widget.userProfile1.sid}\u0000");
+      serverSocket.write("removeAccount~${widget.userProfile1.sid}\u0000");
       serverSocket.flush();
       serverSocket.listen((socketListen) {
         setState(() {
@@ -116,7 +116,7 @@ class _PinkPageState extends State<PinkPage> {
 
     await Socket.connect(host, port).then((serverSocket) {
       serverSocket.write(
-          "changePassword-${widget.userProfile1.sid}-${oldPassword.text}-${newPassword.text}\u0000");
+          "changePassword~${widget.userProfile1.sid}~${oldPassword.text}~${newPassword.text}\u0000");
       serverSocket.flush();
       serverSocket.listen((socketResponse) {
         setState(() {
@@ -175,7 +175,7 @@ class _PinkPageState extends State<PinkPage> {
       final serverSocket = await Socket.connect(host, port);
       print("Connected to server");
 
-      serverSocket.write("getUserInfo-${widget.userProfile1.sid}\u0000");
+      serverSocket.write("getUserInfo~${widget.userProfile1.sid}\u0000");
       await serverSocket.flush();
 
       serverSocket.listen((socketResponse) {
@@ -205,7 +205,7 @@ class _PinkPageState extends State<PinkPage> {
 
 
 
-    List<String> parameters = response.split("-");
+    List<String> parameters = response.split("~");
 
     print("the response is : ${response}");
     setState(() {

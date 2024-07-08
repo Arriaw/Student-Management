@@ -18,16 +18,16 @@ class JalaliDateWidget extends StatelessWidget {
     // final String formattedDate = '${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.day}';
 
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Text(format1(jalaliDate),
-        style: TextStyle(fontSize: 16),
+        style: const TextStyle(fontSize: 20 , fontFamily: "Bnazanin"),
       ),
     );
   }
 
   String format1(Date d) {
     final f = d.formatter;
-    return '-------------------------- (${f.wN} ${f.d} ${f.mN}) امروز ' + '--------------------------';
+    return '-------------- (${f.wN} ${f.d} ${f.mN}) امروز ' + '--------------';
   }
 
   String format2(Date d) {
@@ -39,9 +39,9 @@ class JalaliDateWidget extends StatelessWidget {
 class _NewsPageState extends State<NewsPage> {
   int _currentIndex;
   int _pageIndex = 1;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
-  static List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     AssignmentsPage(),
     NewsPage(),
     ClassesPage(),
@@ -84,7 +84,7 @@ class _NewsPageState extends State<NewsPage> {
   void _onBottomNavTapped(int index) {
     setState(() {
       _pageIndex = index;
-      Navigator.push(context,
+      Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => _widgetOptions[index])
       );
     });
@@ -95,11 +95,12 @@ class _NewsPageState extends State<NewsPage> {
     return Scaffold(
       appBar: AppBar(
         title:
-            Align(
+            const Align(
                 alignment: Alignment.centerRight,
                 child: Text('خبر ها',
-                  style: TextStyle(fontFamily: 'Lato',
-                  fontSize: 40),
+                  style: TextStyle(fontFamily: 'Bnazanin',
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold),
                 )
             ),
       ),
@@ -109,12 +110,12 @@ class _NewsPageState extends State<NewsPage> {
             padding: const EdgeInsets.all(8.0),
             child: Container(
               alignment: Alignment.centerRight,
-              padding: EdgeInsets.symmetric(vertical: 1, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 20),
 
-              child: Text(
+              child: const Text(
                 'ترم بهار ۱۴۰۳',
                 style: TextStyle(color: Colors.black54,
-                fontSize: 17),
+                fontSize: 22),
               ),
             ),
           ),
@@ -131,14 +132,15 @@ class _NewsPageState extends State<NewsPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: OutlinedButton(
                         onPressed: () => _onTabTapped(index),
-                        child: Text(_tabTitles[index],
-                          style: TextStyle(color: _currentIndex != index ? Color.fromRGBO(31, 48, 110, 1) : Colors.white,
-                            fontFamily: 'Lato',
-                            fontSize: 15),
-                            ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _currentIndex == index ? Color.fromRGBO(31, 48, 110, 1) : Colors.white
+                          backgroundColor: _currentIndex == index ? const Color.fromRGBO(31, 48, 110, 1) : Colors.white
                         ),
+                        child: Text(_tabTitles[index],
+                          style: TextStyle(color: _currentIndex != index ? const Color.fromRGBO(31, 48, 110, 1) : Colors.white,
+                            fontFamily: 'Bnazanin',
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold),
+                            ),
                       ),
                     );
                   }),
@@ -155,6 +157,10 @@ class _NewsPageState extends State<NewsPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        iconSize: 30,
+        selectedFontSize: 17,
+        unselectedFontSize: 14,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
@@ -178,7 +184,7 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ],
         currentIndex: _pageIndex,
-        selectedItemColor: Color.fromRGBO(31, 48, 110, 1),
+        selectedItemColor: const Color.fromRGBO(31, 48, 110, 1),
         unselectedItemColor: Colors.grey,
         onTap: _onBottomNavTapped,
       ),
@@ -193,7 +199,7 @@ class NewsTabPage extends StatelessWidget {
       length: 5,
       child: Scaffold(
         appBar: AppBar(
-          bottom: TabBar(
+          bottom: const TabBar(
             tabAlignment: TabAlignment.center,
             tabs: [
               Tab(text: 'تمدید ها'),

@@ -247,7 +247,7 @@ public class Admin {
         return true;
     }
 
-    public static <T extends Serializable> boolean updateData(T newData) {
+    public static <T extends Serializable> void updateData(T newData) {
         ArrayList<T> objects = (ArrayList<T>) Admin.retrieveData(newData.getClass());
         boolean flag = false;
 
@@ -299,7 +299,7 @@ public class Admin {
 
         if (!flag) {
             System.out.println("There is no " + newData.getClass().getSimpleName().toLowerCase() + " with this data to update.");
-            return false;
+            return;
         }
 
         String filename = "Files/" + newData.getClass().getSimpleName() + "s.txt";
@@ -312,10 +312,7 @@ public class Admin {
 
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
-
-        return true;
     }
 
 

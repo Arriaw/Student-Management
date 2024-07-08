@@ -25,6 +25,7 @@ public class Student implements Serializable{
     private String SID;
     private String Image;
 
+    private List<Task> tasks = new ArrayList<>();
 
 
 
@@ -233,4 +234,14 @@ public class Student implements Serializable{
 
     public void setAverageScore(double avgs){averageScore = avgs;}
     public double getAverageScore2(){return averageScore;}
+
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+    }
+
 }//             setAverageScore
