@@ -17,7 +17,7 @@ class ClassesPage extends StatefulWidget {
 class _ClassesPageState extends State<ClassesPage> {
   int _pageIndex = 2;
   List<Course> courses = [];
-  String host = "192.168.100.14";
+  String host = "192.168.1.36";
   int port = 8080;
   late Future<void> _future;
   String res = '';
@@ -85,11 +85,10 @@ class _ClassesPageState extends State<ClassesPage> {
 
     try {
       final socket = await Socket.connect(host, port);
-      print("Connected to server as addCourse");
       socket.write('addClass~${202433000}~$id\u0000');
       await socket.flush();
       socket.listen((data) {
-        response = utf8.decode(data);
+        response = String.fromCharCodes(data);
         print("addCourse response: ${response}");
         completer.complete(response);
       });
@@ -102,6 +101,7 @@ class _ClassesPageState extends State<ClassesPage> {
     } catch (e) {
       print('Error processing response: $e');
     }
+    response = await completer.future;
     return response;
   }
 

@@ -359,7 +359,6 @@ class ClientHandler extends Thread{
                                 break;
                             }
                         }
-
                         if (courses.isEmpty()) {
                             dos.writeUTF("404");
                             System.out.println("No courses available for SID: " + sid);
@@ -369,7 +368,6 @@ class ClientHandler extends Thread{
                                 System.out.println(c.serialize());
                             }
                         }
-
                         dos.flush();
                     } catch (IOException e) {
                         System.err.println("Error handling getClass request: " + e.getMessage());
@@ -398,9 +396,11 @@ class ClientHandler extends Thread{
                         }
                     }
                     if (!courseFound) {
-                        dos.writeUTF("404");
+                        dos.writeBytes("404");
                         dos.flush();
+                        dos.close();
                         System.out.println("No course with this ID in database.");
+                        System.out.println("404");
                     } else {
                         List<Course> sCourses = new ArrayList<>();
                         for (Student s : students) {
@@ -420,8 +420,10 @@ class ClientHandler extends Thread{
 
                         if (courseFound) {
                             System.out.println("Already in this course");
-                            dos.writeUTF("400");
+                            dos.writeBytes("400");
                             dos.flush();
+                            dos.close();
+                            System.out.println("400");
                         }
                         else {
                             for (Student s : students) {
@@ -434,11 +436,14 @@ class ClientHandler extends Thread{
                             }
                             dos.writeBytes("200");
                             dos.flush();
+                            dos.close();
                             System.out.println("Course added successfully");
+                            System.out.println("200");
                         }
                     }
-                    dos.flush();
-                    dos.close();
+//                    dos.flush();
+//                    dos.close();
+
                     break;
                 case "classInfo" :
                     courseID = queryArr[1];
