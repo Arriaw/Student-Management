@@ -468,6 +468,26 @@ class ClientHandler2 extends Thread{
                     break;
 
 
+                case "SignUp":
+                    String name = queryArr[2];
+                    String studentId = queryArr[1];
+                    String path = "unknown";
+
+                    Student studentNew = new Student(name, studentId, Admin.retrieveData(Student.class).size(), Term.بهار۱۴۰۲ـ۱۴۰۳,path);
+                    if(Admin.addData(studentNew)) {
+                        String stSID = studentNew.getSID();
+                        dos.writeBytes(stSID);
+                        dos.flush();
+                        dos.close();
+                        System.out.println(stSID);
+                    }else{
+                        dos.writeBytes("401");
+                        dos.flush();
+                        dos.close();
+                    }
+                    break;
+
+
 
 
             }

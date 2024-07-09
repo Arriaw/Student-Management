@@ -1,10 +1,61 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'SignIn.dart';
 
+class SignUp extends StatefulWidget{
+  @override
+  _SignUpstate createState() => _SignUpstate();
+}
+
+class _SignUpstate extends State<SignUp>{
+
+  // String response= '';
+
+  String host = "192.168.1.36";
+  int port = 4050;
+
+  TextEditingController name = new TextEditingController();
+  TextEditingController ID = new TextEditingController();
+  String? role;
+
+  String response = '';
+  bool flag = false;
+  bool CheckRun = false;
 
 
-class SignUp extends StatelessWidget{
+  Future<String> signupm() async {
+    final completer = Completer<String>();
+
+
+
+    await Socket.connect(host, 4050).then((serverSocket) {
+      String mess = "SignUp-${name.text}-${ID.text}-${role}\u0000";
+      // serverSocket.write(
+      //     "changeFields-${filed}-${widget.userProfile1.sid}-${newValue.text}\u0000");
+      List<int> encoded = utf8.encode(mess);
+      serverSocket.add(encoded);
+      serverSocket.flush();
+      serverSocket.listen((socketResponse) {
+        setState(() {
+          response = String.fromCharCodes(socketResponse);
+        });
+        completer.complete(response);
+      });
+    });
+
+    response = await completer.future;
+    print('the response is : ${response}');
+
+    CheckRun = true;
+
+    return response;
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -75,96 +126,6 @@ class SignUp extends StatelessWidget{
               ),
             ),
 
-            // Positioned(
-            //   left: 94,
-            //   top: 246 ,
-            //   width: 203,
-            //   height: 30,
-            //   child: Container(
-            //     alignment: Alignment.center,
-            //
-            //     child: Text(
-            //       'وارد حساب کاربری خود شوید',
-            //       style: TextStyle(fontSize: 18,
-            //         fontFamily: 'Lato',
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-
-            // Positioned(
-            //   left: 58,
-            //   top: 700,
-            //   width: 280,
-            //   height: 60,
-            //   child: Container(
-            //     alignment: Alignment.center,
-            //     child: RichText(
-            //       textAlign: TextAlign.center,
-            //       text: TextSpan(
-            //         text: 'با استفاده از شبکه‌های اجتماعی' + ' ',
-            //         // text: "create account\n",
-            //         style: TextStyle(
-            //           fontSize: 15,
-            //           fontWeight: FontWeight.bold,
-            //           fontFamily: 'Lato',
-            //           color: Colors.black,
-            //         ),
-            //         children: [
-            //           TextSpan(
-            //             text: 'حساب ایجاد کنید',
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               fontWeight: FontWeight.bold,
-            //               fontFamily: 'Lato',
-            //               color: Colors.black,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-            Positioned(
-              left: 48,
-              top: 700 ,
-              width: 300,
-              height: 43,
-              child: Container(
-                alignment: Alignment.center,
-
-                child: Text(
-                  'با استفاده از شبکه‌های اجتماعی حساب ایجاد کنید',
-                  style: TextStyle(fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Lato',
-                  ),
-                ),
-              ),
-            ),
-
-
-            // Positioned(
-            //   left: 150,
-            //   top: 488,
-            //   width: 200,
-            //   height: 24,
-            //   child: Container(
-            //     alignment: Alignment.center,
-            //
-            //     child: Text(
-            //       'رمز عبور خود را فراموش کرده ام',
-            //       style: TextStyle(fontSize: 15,
-            //         fontFamily: 'Lato',
-            //         color: Color(0xFFBEBEBE),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-
 
             Positioned(
               left: 120,
@@ -194,69 +155,58 @@ class SignUp extends StatelessWidget{
               height: 50,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(40),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 20,
-                        offset: Offset(0, 3),
-                      )
-                    ]
+                  color: Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 0,
+                      blurRadius: 20,
+                      offset: Offset(0, 3),
+                    )
+                  ],
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
-                child: TextField(
+                child: DropdownButtonFormField<String>(
+                  value: role,
                   decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Email',
-                      hintStyle: TextStyle(
-                        color: Color(0xFFC8C8C8),
-                      ),
-                      prefixIcon: Icon(Icons.person, color: Color(0xFF9A9A9A),)
+                    border: InputBorder.none,
+                    hintText: 'نقش',
+                    hintStyle: TextStyle(
+                      color: Color(0xFFC8C8C8),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.backpack,
+                      color: Color(0xFF9A9A9A),
+                    ),
                   ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'student',
+                      child: Text('Student'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'teacher',
+                      child: Text('Teacher'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'admin',
+                      child: Text('Admin'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      role = value;
+                    });
+                  },
                 ),
               ),
-
             ),
-
             //Mobile
 
 
-            Positioned(
-              left: 45,
-              top: 525,
-              width: 300,
-              height: 50,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(40),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 20,
-                        offset: Offset(0, 3),
-                      )
-                    ]
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                alignment: Alignment.center,
-                child: TextField(
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Mobile',
-                      hintStyle: TextStyle(
-                        color: Color(0xFFC8C8C8),
-                      ),
-                      prefixIcon: Icon(Icons.phone_android, color: Color(0xFF9A9A9A),)
-                  ),
-                ),
-              ),
 
-            ),
 
 
 
@@ -285,11 +235,13 @@ class SignUp extends StatelessWidget{
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: TextField(
+                  controller: name,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Username',
+                      hintText: 'نام و نام خانوادگی',
                       hintStyle: TextStyle(
                         color: Color(0xFFC8C8C8),
+                        // fontFamily: "Bnazanin",
                       ),
                       prefixIcon: Icon(Icons.person, color: Color(0xFF9A9A9A),)
                   ),
@@ -319,9 +271,10 @@ class SignUp extends StatelessWidget{
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: TextField(
+                  controller: ID,
                   decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Password',
+                      hintText: 'کد ملی (as your password)',
                       hintStyle: TextStyle(
                         color: Color(0xFFC8C8C8),
                       ),
@@ -331,82 +284,93 @@ class SignUp extends StatelessWidget{
               ),
             ),
 
+
+
             Positioned(
-              left: 289,
-              top: 627,
-              width: 56,
-              height: 34,
-              child: ElevatedButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                  shadowColor: MaterialStateProperty.all(Colors.transparent) ,
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                ),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFF97794), Color(0xFF623AA2)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 20,
-                        offset: Offset(0,3),
+                left: 289,
+                top: 627,
+                width: 56,
+                height: 34,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    print("SignUp-${name.text}-${ID.text}-${role}");
+                    signupm();
+
+                    if(response == "401"){
+                      print("the id ${ID.text} is already taken !");
+
+
+                    }else {
+                      print("the user ${name.text} created successfully with SID : ${response}");
+                      flag = true;
+
+
+                      await Future.delayed(Duration(seconds: 2));
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
+                    }
+
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                    shadowColor: MaterialStateProperty.all(Colors.transparent) ,
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  ),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFF97794), Color(0xFF623AA2)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
-                  ),
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 50,
-                    width: 200,
-                    child: Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(40),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 0,
+                          blurRadius: 20,
+                          offset: Offset(0,3),
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 50,
+                      width: 200,
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
+                )
+            ),
+
+            Positioned(
+              left: 48,
+              top: 550 ,
+              width: 300,
+              height: 43,
+              child: Container(
+                alignment: Alignment.center,
+
+                child: Text(
+                  CheckRun
+                      ? flag
+                        ? 'اضافه شد ${name.text}'
+                        : 'خطا در ثبت: اسم یا کد ملی تکراری است'
+                  : "" ,
+
+                  style: TextStyle(fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color:flag
+                        ? Colors.green
+                        : Colors.redAccent,
+                    fontFamily: 'Bnazanin',
+                  ),
                 ),
-
-
-              // child: Container(
-              //   decoration: BoxDecoration(
-              //     color: Color(0xFFFFFFFF),
-              //     borderRadius: BorderRadius.circular(40),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.black.withOpacity(0.1),
-              //         spreadRadius: 0,
-              //         blurRadius: 20,
-              //         offset: Offset(0, 3),
-              //       )
-              //     ],
-              //     gradient: LinearGradient(
-              //       begin: Alignment.topLeft,
-              //       end: Alignment.bottomRight,
-              //       colors: [
-              //         Color(0xFFF97794), // Start color
-              //         Color(0xFF623AA2), // End color
-              //       ],
-              //       stops: [0.0, 1.0], // Positions of the colors
-              //     ),
-              //
-              //   ),
-              //   alignment: Alignment.center,
-              //   child: Icon(
-              //     Icons.arrow_forward,
-              //     color: Colors.white,
-              //   ),
-              //
-              //   ),
-
-              )
               ),
+            ),
 
             Positioned(
               left: 120,
@@ -522,4 +486,3 @@ class WaveClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
-
