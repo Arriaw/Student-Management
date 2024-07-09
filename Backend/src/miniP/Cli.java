@@ -10,9 +10,6 @@ import java.util.zip.CheckedOutputStream;
 
 public class Cli {
     public static void main(String[] args) throws IOException {
-        ArrayList<Assignment> assignments = Admin.retrieveData(Assignment.class);
-        for (Assignment a : assignments)
-            System.out.println(a.getName());
         System.out.println("|----------------Welcome----------------|");
         Scanner scanner = new Scanner(System.in);
         menu();
@@ -612,7 +609,7 @@ public class Cli {
                         break;
                     }
                     for(Student s: students) {
-                        System.out.println(s.getStudentName() + "-" + s.getSID() +  "-" + s.getUsername() + "-" + s.getPassword() + "-" + s.getTasks().size());
+                        System.out.println(s.getStudentName() + "-" + s.getSID() +  "-" + s.getUsername() + "-" + s.getPassword() + "-" + s.getTasks().size() + "-" + s.getCourses().size());
                         for (Task t : s.getTasks())
                             System.out.println(t.serialize());
                     }

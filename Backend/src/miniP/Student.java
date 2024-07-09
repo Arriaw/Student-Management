@@ -24,10 +24,9 @@ public class Student implements Serializable{
     private Term currentTerm;
     private String SID;
     private String Image;
-
     private List<Task> tasks = new ArrayList<>();
-
-
+    private List<Assignment> assignments = new ArrayList<>();
+    private List<Assignment> notFinishedAssignments = new ArrayList<>();
 
     Student(String name, String ID, int countStudent, Term currentTerm, String path){
         studentID = ID;
