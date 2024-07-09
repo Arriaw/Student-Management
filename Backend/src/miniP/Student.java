@@ -244,14 +244,17 @@ public class Student implements Serializable{
     }
 
     public List<Assignment> getAssignments() {
-        for (Course c : getCourses()) {
-            if (!c.getAssignments().isEmpty()) {
-                assignments.addAll(c.getAssignments());
-            }
-        }
+//        for (Course c : getCourses()) {
+//            if (!c.getAssignments().isEmpty()) {
+//                assignments.addAll(c.getAssignments());
+//            }
+//        }
         return assignments;
     }
 
+    void addAssignment(Assignment assignment) {
+        assignments.add(assignment);
+    }
     public List<Assignment> getNotFinishedAssignments() {
         return notFinishedAssignments;
     }

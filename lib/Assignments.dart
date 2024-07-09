@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'package:file_picker/file_picker.dart';
@@ -25,25 +24,23 @@ class Assignment {
       name: parts[0],
       description: parts[1],
       dueTime: DateTime.parse(parts[2]),
-      isDone: parts[4] == 'true',
-      score: double.parse(parts[5]),
+      isDone: parts[3] == 'true',
+      score: double.parse(parts[4]),
     );
   }
 }
 
 class AssignmentsPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _AssignmentsPage();
+  State<StatefulWidget> createState() => _AssignmentsPageState();
 }
 
-class _AssignmentsPage extends State<AssignmentsPage> {
+class _AssignmentsPageState extends State<AssignmentsPage> {
   int _pageIndex = 0;
   String host = "192.168.100.14";
   int port = 8080;
   late Future<void> _future;
   List<Assignment> assignments = [];
-  List<Assignment> notFinishedAssignments = [];
-  List<Assignment> finishedAssignments = [];
 
   static final List<Widget> _widgetOptions = <Widget>[
     AssignmentsPage(),
@@ -71,9 +68,7 @@ class _AssignmentsPage extends State<AssignmentsPage> {
 
   Future<void> getAssignments() async {
     String allAssignmentsResponse = '';
-    String notFinishedAssignmentsResponse = '';
     final allAssignmentsCompleter = Completer<String>();
-    final notFinishedAssignmentsCompleter = Completer<String>();
 
     print("Connecting to server to get all assignments...");
     try {
@@ -99,36 +94,10 @@ class _AssignmentsPage extends State<AssignmentsPage> {
       allAssignmentsCompleter.completeError(e);
     }
 
-    print("Connecting to server to get not finished assignments...");
-    try {
-      final socket = await Socket.connect(host, port);
-      socket.write("getNotFinishedAssignments~202433000\u0000");
-      await socket.flush();
-      socket.listen((data) {
-        notFinishedAssignmentsResponse = utf8.decode(data.sublist(2));
-        notFinishedAssignmentsCompleter.complete(notFinishedAssignmentsResponse);
-        socket.destroy();
-      }, onError: (error) {
-        print('Error: $error');
-        notFinishedAssignmentsCompleter.completeError(error);
-        socket.destroy();
-      }, onDone: () {
-        if (!notFinishedAssignmentsCompleter.isCompleted) {
-          notFinishedAssignmentsCompleter.complete(notFinishedAssignmentsResponse);
-        }
-        socket.destroy();
-      });
-    } catch (e) {
-      print('Error: $e');
-      notFinishedAssignmentsCompleter.completeError(e);
-    }
-
     try {
       allAssignmentsResponse = await allAssignmentsCompleter.future;
-      notFinishedAssignmentsResponse = await notFinishedAssignmentsCompleter.future;
 
       print("All Assignments response: $allAssignmentsResponse");
-      print("Not Finished Assignments response: $notFinishedAssignmentsResponse");
 
       if (allAssignmentsResponse == "404") {
         print("No assignments found");
@@ -138,19 +107,6 @@ class _AssignmentsPage extends State<AssignmentsPage> {
               .split('\n')
               .where((assignment) => assignment.isNotEmpty)
               .map((assignment) => Assignment.fromString(assignment))
-              .toList();
-
-          notFinishedAssignments = notFinishedAssignmentsResponse
-              .split('\n')
-              .where((assignment) => assignment.isNotEmpty)
-              .map((assignment) => Assignment.fromString(assignment))
-              .toList();
-
-          finishedAssignments = assignments
-              .where((assignment) =>
-          !notFinishedAssignments.any((notFinishedAssignment) =>
-          notFinishedAssignment.name == assignment.name &&
-              notFinishedAssignment.dueTime == assignment.dueTime))
               .toList();
         });
       }
@@ -210,8 +166,6 @@ class _AssignmentsPage extends State<AssignmentsPage> {
   void _showAssignmentDialog(BuildContext context, Assignment assignment) {
     final TextEditingController deliveryNotesController = TextEditingController();
     String? uploadedFileName;
-
-    DateTime dueTime = assignment.dueTime;
 
     showDialog(
       context: context,
@@ -421,7 +375,7 @@ class _AssignmentsPage extends State<AssignmentsPage> {
                       style: TextStyle(fontFamily: "Bnazanin", fontSize: 19, color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
-                      setState(() {
+                      setState(() async {
                         assignment.isDone = true;
                         // Handle saving uploaded file information
                       });
@@ -467,69 +421,55 @@ class _AssignmentsPage extends State<AssignmentsPage> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  if (notFinishedAssignments.isNotEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 20),
                       child: Text(
-                        'تمرین‌های ناتمام',
-                        style: TextStyle(
-                          fontFamily: "Bnazanin",
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                        textAlign: TextAlign.right,
+                        '‏${f.d} ${f.mN} ${f.y}',
+                        style: const TextStyle(color: Colors.black54, fontSize: 22, fontFamily: 'Bnazanin'),
                       ),
                     ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: notFinishedAssignments.length,
-                    itemBuilder: (context, index) {
-                      final assignment = notFinishedAssignments[index];
-                      return ListTile(
-                        title: Text(
-                          assignment.name,
-                          style: const TextStyle(fontFamily: "Bnazanin"),
-                        ),
-                        subtitle: Text(
-                          'ددلاین: ${_formatJalaliDateTime(assignment.dueTime)}',
-                          style: const TextStyle(fontFamily: "Bnazanin"),
-                        ),
-                        onTap: () => _showAssignmentDialog(context, assignment),
-                      );
-                    },
                   ),
-                  if (finishedAssignments.isNotEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'تمرین‌های تمام‌شده',
-                        style: TextStyle(
-                          fontFamily: "Bnazanin",
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: finishedAssignments.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: assignments.length,
                     itemBuilder: (context, index) {
-                      final assignment = finishedAssignments[index];
-                      return ListTile(
-                        title: Text(
-                          assignment.name,
-                          style: const TextStyle(fontFamily: "Bnazanin"),
+                      Assignment assignment = assignments[index];
+                      return Card(
+                        color: assignment.isDone ? const Color.fromRGBO(245, 72, 127, 110) : const Color.fromRGBO(245, 72, 127, 15),
+                        elevation: 10,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                          title: Text(
+                            assignment.name,
+                            style: TextStyle(
+                                fontFamily: 'Bnazanin',
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                decoration: assignment.isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                                decorationColor: Colors.white),
+                            textAlign: TextAlign.right,
+                            textDirection: TextDirection.rtl,
+                          ),
+                          subtitle: Text(
+                            '${_formatJalaliDate(assignment.dueTime)}',
+                            style: const TextStyle(fontFamily: 'Bnazanin', fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold),
+                          ),
+                          trailing: assignment.isDone
+                              ? const Icon(
+                            Icons.check_circle_outlined,
+                            color: Colors.white,
+                          )
+                              : const Icon(
+                            Icons.circle_outlined,
+                            color: Colors.white,
+                          ),
+                          onTap: () => _showAssignmentDialog(context, assignment),
                         ),
-                        subtitle: Text(
-                          'ددلاین: ${_formatJalaliDateTime(assignment.dueTime)}',
-                          style: const TextStyle(fontFamily: "Bnazanin"),
-                        ),
-                        onTap: () => _showAssignmentDialog(context, assignment),
                       );
                     },
                   ),

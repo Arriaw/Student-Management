@@ -172,7 +172,10 @@ public class Cli {
                     course.addAssignment(assignment);
                     Admin.updateData(course);
                     Admin.addData(assignment);
-                    System.out.println("Assignment add to the course successfully");
+                    for (Student s : course.getStudents()) {
+                        Admin.updateData(s);
+                    }
+                    System.out.println("Assignment added to the course successfully");
                     break;
                 case 2:
                     clear();
