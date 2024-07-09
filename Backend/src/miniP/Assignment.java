@@ -1,45 +1,52 @@
 package miniP;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.Period;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Assignment implements Serializable {
     private String name;
     private String description;
     private double score;
     private Course course;
-    private LocalDate deadline;
-    private int remainingDays;
+    private LocalDateTime deadline;
+    private long remainingDays;
     private boolean isActive;
-
 
     public Assignment(Course course, String deadline, String name, String description, double score){
         this.course = course;
-        this.deadline = LocalDate.parse(deadline);
+        this.deadline = LocalDateTime.parse(deadline);
         this.name = name;
         this.description = description;
         this.score = score;
     }
 
-    public void setDeadline(String deadline) {
-        this.deadline = LocalDate.parse(deadline);
+    public String serializeNotFinished() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        return name + "," + description + "," +  deadline.format(formatter) + "," + "false," + score + '\n';
     }
 
-    public LocalDate getDeadline() {
+    public String serializeAll() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        return name + "," + description + "," +  deadline.format(formatter) + "," + "false," + score + '\n';
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = LocalDateTime.parse(deadline);
+    }
+
+    public LocalDateTime getDeadline() {
         return deadline;
     }
 
     private void updateRemainingDays() {
-        LocalDate currentDate = LocalDate.now();
-        remainingDays = Period.between(currentDate, deadline).getDays();
+        LocalDateTime currentDate = LocalDateTime.now();
+        remainingDays = Duration.between(currentDate, deadline).toDays();
     }
 
     public void printRemainingDays() {
-        if (isActive() == false){
+        if (!isActive()){
             System.out.println("This assignment is not active yet.");
             return;
         }
@@ -76,19 +83,8 @@ public class Assignment implements Serializable {
         return score;
     }
 
-    public int getRemainingDays() {
+    public long getRemainingDays() {
         updateRemainingDays();
         return remainingDays;
-    }
-
-    public static class AppendableObjectOutputStream extends ObjectOutputStream {
-        public AppendableObjectOutputStream(OutputStream out) throws IOException {
-            super(out);
-        }
-
-        @Override
-        protected void writeStreamHeader() throws IOException {
-            reset();
-        }
     }
 }

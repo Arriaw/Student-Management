@@ -243,4 +243,16 @@ public class Student implements Serializable{
         this.tasks.add(task);
     }
 
-}//             setAverageScore
+    public List<Assignment> getAssignments() {
+        for (Course c : getCourses()) {
+            if (!c.getAssignments().isEmpty()) {
+                assignments.addAll(c.getAssignments());
+            }
+        }
+        return assignments;
+    }
+
+    public List<Assignment> getNotFinishedAssignments() {
+        return notFinishedAssignments;
+    }
+}

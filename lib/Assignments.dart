@@ -1,10 +1,35 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shamsi_date/shamsi_date.dart';
+import 'package:file_picker/file_picker.dart';
 import 'News.dart';
 import 'Classes.dart';
 import 'TodoPage.dart';
 import 'Homepage.dart';
 
+class Assignment {
+  String name;
+  String description;
+  DateTime dueTime;
+  bool isDone;
+  double score;
+
+  Assignment({required this.name, required this.description, required this.dueTime, required this.isDone, required this.score});
+
+  factory Assignment.fromString(String taskString) {
+    final parts = taskString.split(',');
+    return Assignment(
+      name: parts[0],
+      description: parts[1],
+      dueTime: DateTime.parse(parts[2]),
+      isDone: parts[4] == 'true',
+      score: double.parse(parts[5]),
+    );
+  }
+}
 
 class AssignmentsPage extends StatefulWidget {
   @override
@@ -13,59 +38,506 @@ class AssignmentsPage extends StatefulWidget {
 
 class _AssignmentsPage extends State<AssignmentsPage> {
   int _pageIndex = 0;
+  String host = "192.168.100.14";
+  int port = 8080;
+  late Future<void> _future;
+  List<Assignment> assignments = [];
+  List<Assignment> notFinishedAssignments = [];
+  List<Assignment> finishedAssignments = [];
 
   static final List<Widget> _widgetOptions = <Widget>[
     AssignmentsPage(),
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    Homepage()
+    Homepage(),
   ];
 
   void _onBottomNavTapped(int index) {
     setState(() {
       _pageIndex = index;
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => _widgetOptions[index])
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => _widgetOptions[index]),
       );
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    _future = getAssignments();
+  }
+
+  Future<void> getAssignments() async {
+    String allAssignmentsResponse = '';
+    String notFinishedAssignmentsResponse = '';
+    final allAssignmentsCompleter = Completer<String>();
+    final notFinishedAssignmentsCompleter = Completer<String>();
+
+    print("Connecting to server to get all assignments...");
+    try {
+      final socket = await Socket.connect(host, port);
+      socket.write("getAllAssignments~202433000\u0000");
+      await socket.flush();
+      socket.listen((data) {
+        allAssignmentsResponse = utf8.decode(data.sublist(2));
+        allAssignmentsCompleter.complete(allAssignmentsResponse);
+        socket.destroy();
+      }, onError: (error) {
+        print('Error: $error');
+        allAssignmentsCompleter.completeError(error);
+        socket.destroy();
+      }, onDone: () {
+        if (!allAssignmentsCompleter.isCompleted) {
+          allAssignmentsCompleter.complete(allAssignmentsResponse);
+        }
+        socket.destroy();
+      });
+    } catch (e) {
+      print('Error: $e');
+      allAssignmentsCompleter.completeError(e);
+    }
+
+    print("Connecting to server to get not finished assignments...");
+    try {
+      final socket = await Socket.connect(host, port);
+      socket.write("getNotFinishedAssignments~202433000\u0000");
+      await socket.flush();
+      socket.listen((data) {
+        notFinishedAssignmentsResponse = utf8.decode(data.sublist(2));
+        notFinishedAssignmentsCompleter.complete(notFinishedAssignmentsResponse);
+        socket.destroy();
+      }, onError: (error) {
+        print('Error: $error');
+        notFinishedAssignmentsCompleter.completeError(error);
+        socket.destroy();
+      }, onDone: () {
+        if (!notFinishedAssignmentsCompleter.isCompleted) {
+          notFinishedAssignmentsCompleter.complete(notFinishedAssignmentsResponse);
+        }
+        socket.destroy();
+      });
+    } catch (e) {
+      print('Error: $e');
+      notFinishedAssignmentsCompleter.completeError(e);
+    }
+
+    try {
+      allAssignmentsResponse = await allAssignmentsCompleter.future;
+      notFinishedAssignmentsResponse = await notFinishedAssignmentsCompleter.future;
+
+      print("All Assignments response: $allAssignmentsResponse");
+      print("Not Finished Assignments response: $notFinishedAssignmentsResponse");
+
+      if (allAssignmentsResponse == "404") {
+        print("No assignments found");
+      } else {
+        setState(() {
+          assignments = allAssignmentsResponse
+              .split('\n')
+              .where((assignment) => assignment.isNotEmpty)
+              .map((assignment) => Assignment.fromString(assignment))
+              .toList();
+
+          notFinishedAssignments = notFinishedAssignmentsResponse
+              .split('\n')
+              .where((assignment) => assignment.isNotEmpty)
+              .map((assignment) => Assignment.fromString(assignment))
+              .toList();
+
+          finishedAssignments = assignments
+              .where((assignment) =>
+          !notFinishedAssignments.any((notFinishedAssignment) =>
+          notFinishedAssignment.name == assignment.name &&
+              notFinishedAssignment.dueTime == assignment.dueTime))
+              .toList();
+        });
+      }
+    } catch (e) {
+      print('Error processing response: $e');
+    }
+  }
+
+  Future<void> toggleAssignmentOnServer(Assignment assignment) async {
+    String response = '';
+    final completer = Completer<String>();
+
+    try {
+      final socket = await Socket.connect(host, port);
+      print("connected to server as toggleAssignment");
+      socket.write('toggleAssignment~${202433000}~${assignment.name}~${assignment.dueTime.toString()}~${assignment.isDone}\u0000');
+      socket.flush();
+      socket.listen((data) {
+        response = utf8.decode(data);
+        print("toggleAssignment response : " + response);
+        completer.complete(response);
+      });
+      socket.close();
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _toggleAssignment(Assignment assignment) {
+    setState(() {
+      assignment.isDone = !assignment.isDone;
+    });
+    toggleAssignmentOnServer(assignment);
+  }
+
+  String _calculateRemainingDays(DateTime dueDate) {
+    final Duration difference = dueDate.difference(DateTime.now());
+    if (difference.inDays >= 1) {
+      return '‏${difference.inDays} روز تا ددلاین ';
+    } else if (difference.inDays == 0 && difference.inMinutes > 0) {
+      return '‏${difference.inHours}:${difference.inMinutes - difference.inHours * 60} ساعت تا ددلاین ';
+    } else {
+      return 'زمان ددلاین گذشته است';
+    }
+  }
+
+  String _formatJalaliDateTime(DateTime dateTime) {
+    final Jalali jalaliDate = Jalali.fromDateTime(dateTime);
+    return '${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.day}  -  ${dateTime.hour}:${dateTime.minute}';
+  }
+
+  String _formatJalaliDate(DateTime dateTime) {
+    final Jalali jalaliDate = Jalali.fromDateTime(dateTime);
+    return '${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.day}';
+  }
+
+  void _showAssignmentDialog(BuildContext context, Assignment assignment) {
+    final TextEditingController deliveryNotesController = TextEditingController();
+    String? uploadedFileName;
+
+    DateTime dueTime = assignment.dueTime;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              titlePadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(16),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'جزئیات تمرین',
+                    style: TextStyle(
+                      fontFamily: "Bnazanin",
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'عنوان: ',
+                            style: TextStyle(fontFamily: "Bnazanin", fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: assignment.name,
+                            style: const TextStyle(
+                              fontFamily: "Bnazanin",
+                              fontSize: 19,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                    ),
+                    const SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'ددلاین: ',
+                            style: TextStyle(fontFamily: "Bnazanin", fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: _formatJalaliDateTime(assignment.dueTime),
+                            style: const TextStyle(
+                              fontFamily: "Bnazanin",
+                              fontSize: 19,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                    ),
+                    const SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'مدت زمان باقی مانده: ',
+                            style: TextStyle(fontFamily: "Bnazanin", fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: _calculateRemainingDays(assignment.dueTime),
+                            style: const TextStyle(
+                              fontFamily: "Bnazanin",
+                              fontSize: 19,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'توضیحات:',
+                      style: TextStyle(
+                        fontFamily: "Bnazanin",
+                        fontSize: 19,
+                      ),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 50),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        assignment.description,
+                        style: const TextStyle(fontFamily: "Bnazanin", fontSize: 19, color: Colors.grey),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'نمره: ',
+                            style: TextStyle(
+                              fontFamily: "Bnazanin",
+                              fontSize: 19,
+                            ),
+                          ),
+                          TextSpan(
+                            text: assignment.score.toString(),
+                            style: const TextStyle(
+                              fontFamily: "Bnazanin",
+                              fontSize: 19,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      controller: deliveryNotesController,
+                      decoration: InputDecoration(
+                        hintText: 'توضیحات تحویل',
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.upload),
+                          onPressed: () async {
+                            FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+                            if (result != null) {
+                              setState(() {
+                                uploadedFileName = result.files.single.name;
+                              });
+                            }
+                          },
+                        ),
+                        const Text(
+                          'بارگذاری تمرین',
+                          style: TextStyle(fontFamily: "Bnazanin", fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    if (uploadedFileName != null) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        'فایل آپلود شده: $uploadedFileName',
+                        style: const TextStyle(
+                          fontFamily: "Bnazanin",
+                          fontSize: 16,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              actions: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Text(
+                      'ثبت',
+                      style: TextStyle(fontFamily: "Bnazanin", fontSize: 19, color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        assignment.isDone = true;
+                        // Handle saving uploaded file information
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Jalali jalaliDate = Jalali.now();
-    // final String formattedDate = '${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.day}';
     final f = jalaliDate.formatter;
 
     return Scaffold(
       appBar: AppBar(
-        title:
-        const Align(
+        title: const Align(
           alignment: Alignment.centerRight,
-          child: Text('تمرین ها',
-            style: TextStyle(fontSize: 50,
-                fontFamily: 'Bnazanin',
-            fontWeight: FontWeight.bold),
+          child: Text(
+            'تمرین ها',
+            style: TextStyle(
+              fontSize: 30,
+              fontFamily: 'Bnazanin',
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.symmetric(vertical: 1, horizontal: 20),
-
-              child: Text(
-                '‏${f.d} ${f.mN} ${f.y}',
-                style: const TextStyle(color: Colors.black54,
-                    fontSize: 22,
-                fontFamily: 'Bnazanin'),
+      body: FutureBuilder<void>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  if (notFinishedAssignments.isNotEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'تمرین‌های ناتمام',
+                        style: TextStyle(
+                          fontFamily: "Bnazanin",
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: notFinishedAssignments.length,
+                    itemBuilder: (context, index) {
+                      final assignment = notFinishedAssignments[index];
+                      return ListTile(
+                        title: Text(
+                          assignment.name,
+                          style: const TextStyle(fontFamily: "Bnazanin"),
+                        ),
+                        subtitle: Text(
+                          'ددلاین: ${_formatJalaliDateTime(assignment.dueTime)}',
+                          style: const TextStyle(fontFamily: "Bnazanin"),
+                        ),
+                        onTap: () => _showAssignmentDialog(context, assignment),
+                      );
+                    },
+                  ),
+                  if (finishedAssignments.isNotEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'تمرین‌های تمام‌شده',
+                        style: TextStyle(
+                          fontFamily: "Bnazanin",
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: finishedAssignments.length,
+                    itemBuilder: (context, index) {
+                      final assignment = finishedAssignments[index];
+                      return ListTile(
+                        title: Text(
+                          assignment.name,
+                          style: const TextStyle(fontFamily: "Bnazanin"),
+                        ),
+                        subtitle: Text(
+                          'ددلاین: ${_formatJalaliDateTime(assignment.dueTime)}',
+                          style: const TextStyle(fontFamily: "Bnazanin"),
+                        ),
+                        onTap: () => _showAssignmentDialog(context, assignment),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
+            );
+          }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
