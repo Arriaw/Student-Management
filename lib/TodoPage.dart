@@ -50,7 +50,7 @@ class _TodoListPageState extends State<TodoListPage> {
     print("Connecting to server as getTask ...");
     try {
       final socket = await Socket.connect(host, port);
-      socket.write("getTasks~${202438100}\u0000");
+      socket.write("getTasks~${202433000}\u0000");
       await socket.flush();
       print("Connected to server as getTask");
 
@@ -71,19 +71,15 @@ class _TodoListPageState extends State<TodoListPage> {
       print('Error: $e');
       completer.completeError(e);
     }
-    
+
     try {
-    response = await completer.future;
-    print("The getTask response is: ${response}");
-    if (response == "404") {
-      print("no tasks yet");
-    }
-    else {
-      setState(() {
-        tasks = response.split('\n')
-            .where((task) => task.isNotEmpty)
-            .map((task) => Task.fromString(task))
-            .toList();
+      response = await completer.future;
+      print("The getTask response is: ${response}");
+      if (response == "404") {
+        print("no tasks yet");
+      } else {
+        setState(() {
+          tasks = response.split('\n').where((task) => task.isNotEmpty).map((task) => Task.fromString(task)).toList();
         });
       }
     } catch (e) {
@@ -107,8 +103,7 @@ class _TodoListPageState extends State<TodoListPage> {
     try {
       final socket = await Socket.connect(host, port);
       print("connected to server as addTask");
-      socket.write(
-          'addTask~${202438100}~${task.title}~${task.dueDate.toString()}~${task.isDone}\u0000');
+      socket.write('addTask~${202433000}~${task.title}~${task.dueDate.toString()}~${task.isDone}\u0000');
       socket.flush();
       socket.listen((data) {
         response = utf8.decode(data);
@@ -129,7 +124,6 @@ class _TodoListPageState extends State<TodoListPage> {
     addTaskToServer(newTask);
   }
 
-
   Future<void> toggleTaskOnServer(Task task) async {
     String response = '';
     final completer = Completer<String>();
@@ -137,8 +131,7 @@ class _TodoListPageState extends State<TodoListPage> {
     try {
       final socket = await Socket.connect(host, port);
       print("connected to server as toggleTask");
-      socket.write(
-          'toggleTask~${202438100}~${task.title}~${task.dueDate.toString()}~${task.isDone}\u0000');
+      socket.write('toggleTask~${202433000}~${task.title}~${task.dueDate.toString()}~${task.isDone}\u0000');
       socket.flush();
       socket.listen((data) {
         response = utf8.decode(data);
@@ -161,8 +154,7 @@ class _TodoListPageState extends State<TodoListPage> {
   Future<void> deleteTaskFromServer(Task task) async {
     try {
       final socket = await Socket.connect(host, port);
-      socket.write(
-          'deleteTask~${202438100}~${task.title}~${task.dueDate.toString()}\u0000');
+      socket.write('deleteTask~${202433000}~${task.title}~${task.dueDate.toString()}\u0000');
       socket.flush();
 
       socket.listen((data) {
@@ -181,7 +173,6 @@ class _TodoListPageState extends State<TodoListPage> {
     });
     deleteTaskFromServer(task);
   }
-
 
   String _formatJalaliDateTime(DateTime dateTime) {
     final Jalali jalaliDate = Jalali.fromDateTime(dateTime);

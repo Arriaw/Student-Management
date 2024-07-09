@@ -347,15 +347,97 @@ class ClientHandler extends Thread{
                     dos.flush();
                     break;
                 case "getClasses":
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    List<Course> courses = new ArrayList<>();
+
+                    try {
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                System.out.println("Student found");
+                                courses = s.getCourses();
+                                break;
+                            }
+                        }
+
+                        if (courses.isEmpty()) {
+                            dos.writeUTF("404");
+                            System.out.println("No courses available for SID: " + sid);
+                        } else {
+                            for (Course c : courses) {
+                                dos.writeUTF(c.serialize());
+                                System.out.println(c.serialize());
+                            }
+                        }
+
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.err.println("Error handling getClass request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
                     break;
                 case "addClass":
+                    sid = queryArr[1];
+                    String courseID = queryArr[2];
+                    courses = Admin.retrieveData(Course.class);
+                    students = Admin.retrieveData(Student.class);
+                    boolean courseFound = false;
+                    Course course = new Course();
+                    for (Course c : courses){
+                        if (c.getID().equals(courseID)) {
+                            course = c;
+                            courseFound = true;
+                            break;
+                        }
+                    }
+                    if (!courseFound) {
+                        dos.writeUTF("404");
+                        System.out.println("No course with this ID in database.");
+                    } else {
+                        List<Course> sCourses = new ArrayList<>();
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                sCourses = s.getCourses();
+                                break;
+                            }
+                        }
+
+                        courseFound = false;
+                        for (Course c : sCourses) {
+                            if (c.getID().equals(course.getID())) {
+                                courseFound = true;
+                                break;
+                            }
+                        }
+
+                        if (courseFound) {
+                            System.out.println("Already in this course");
+                            dos.writeUTF("400");
+                        }
+                        else {
+                            for (Student s : students) {
+                                if (s.getSID().equals(sid)) {
+                                    s.getCourses().add(course);
+                                    Admin.updateData(s);
+                                    Admin.updateData(course);
+                                    break;
+                                }
+                            }
+                            dos.writeUTF(course.serialize());
+                            System.out.println("Course added successfully");
+                        }
+                    }
+                    dos.flush();
+                    dos.close();
                     break;
                 case "getAssignments":
                     break;
-
-
-
-
             }
         } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             throw new RuntimeException(e);

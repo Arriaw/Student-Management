@@ -42,6 +42,10 @@ public class Course implements Serializable {
 
     public Course(){}
 
+    public String serialize() {
+        return getName() + "," + getTeacher().getTeacherName() + "," + getUnit() + "," + getTopStudent().getStudentName() + "," + getActiveAssignments().size() + '\n';
+    }
+
     void printStudents() {
         for (int i = 0 ; i < students.size(); i++){
             System.out.println(students.get(i).getStudentName());
@@ -78,13 +82,13 @@ public class Course implements Serializable {
     void addStudent(Student student) {
         students.add(student);
         studentScores.put(student, 0.0);
-        student.addCourse(this);
+//        student.addCourse(this);
     }
 
     void removeStudent(Student student) {
         students.remove(student);
         studentScores.remove(student);
-        student.removeCourse(this);
+//        student.removeCourse(this);
     }
 
     void addAssignment(Assignment assignment) {
@@ -152,5 +156,12 @@ public class Course implements Serializable {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    public Student getTopStudent() {
+        List<Map.Entry<Student, Double>> sortedEntries = new ArrayList<>(studentScores.entrySet());
+        sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        this.topStudent = sortedEntries.getFirst().getKey();
+        return topStudent;
     }
 }
