@@ -95,6 +95,9 @@ public class Course implements Serializable {
         if (assignments == null)
             assignments = new ArrayList<>();
         assignments.add(assignment);
+        for (Student s : students) {
+            s.addAssignment(assignment);
+        }
     }
 
     void removeAssignment(Assignment assignment) {

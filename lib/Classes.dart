@@ -17,7 +17,7 @@ class ClassesPage extends StatefulWidget {
 class _ClassesPageState extends State<ClassesPage> {
   int _pageIndex = 2;
   List<Course> courses = [];
-  String host = "192.168.1.36";
+  String host = "192.168.100.14";
   int port = 8080;
   late Future<void> _future;
   String res = '';
@@ -221,7 +221,7 @@ class _ClassesPageState extends State<ClassesPage> {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    addCourseToServer(classIdController.text);
+                    _addCourse(classIdController.text);
                     Navigator.of(context).pop();
                   },
                   child: const Text(

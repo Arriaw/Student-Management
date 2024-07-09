@@ -469,7 +469,77 @@ class ClientHandler extends Thread{
                         }
                     }
                     break;
-                case "getAssignments":
+                case "getAllAssignments":
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    List<Assignment> assignments =  new ArrayList<>();
+
+                    try {
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                System.out.println("Student found");
+                                assignments = s.getAssignments();
+                                break;
+                            }
+                        }
+
+                        if (assignments.isEmpty()) {
+                            dos.writeBytes("404");
+                            System.out.println("No tasks available for SID: " + sid);
+                        } else {
+                            for (Assignment a : assignments) {
+                                dos.writeUTF(a.serializeAll());
+                                System.out.println(a.serializeAll());
+                            }
+                        }
+
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.err.println("Error handling getAssignments request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
+                    break;
+                case "getNotFinishedAssignments":
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    assignments =  new ArrayList<>();
+
+                    try {
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                System.out.println("Student found");
+                                assignments = s.getNotFinishedAssignments();
+                                break;
+                            }
+                        }
+
+                        if (assignments.isEmpty()) {
+                            dos.writeBytes("404");
+                            System.out.println("No tasks available for SID: " + sid);
+                        } else {
+                            for (Assignment a : assignments) {
+                                dos.writeUTF(a.serializeNotFinished());
+                                System.out.println(a.serializeNotFinished());
+                            }
+                        }
+
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.err.println("Error handling getNotFinishedAssignments request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
                     break;
 
 

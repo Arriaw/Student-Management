@@ -151,7 +151,7 @@ public class Cli {
                         System.out.println("You are not the teacher of this course.");
                         break;
                     }
-                    System.out.println("Enter the deadline of this assignment(YYYY-MM-DD): ");
+                    System.out.println("Enter the deadline of this assignment(yyyy-MM-dd HH:mm:ss.SSS): ");
                     String deadline = scanner.nextLine();
                     System.out.println("Enter the title of this assignment: ");
                     String title = scanner.nextLine();
@@ -172,7 +172,10 @@ public class Cli {
                     course.addAssignment(assignment);
                     Admin.updateData(course);
                     Admin.addData(assignment);
-                    System.out.println("Assignment add to the course successfully");
+                    for (Student s : course.getStudents()) {
+                        Admin.updateData(s);
+                    }
+                    System.out.println("Assignment added to the course successfully");
                     break;
                 case 2:
                     clear();
@@ -547,7 +550,7 @@ public class Cli {
                         break;
                     }
                     for(Course c: courses)
-                        System.out.println(c.getName() + "-" + c.getID() + "-" + (c.getTeacher() == null ? "No teacher" : c.getTeacher().getTeacherName()) + "-" + c.getStudentCount());
+                        System.out.println(c.getName() + "-" + c.getID() + "-" + (c.getTeacher() == null ? "No teacher" : c.getTeacher().getTeacherName()) + "-" + c.getStudentCount() + "-" + c.getAssignments().size());
 
                     break;
                 case 4:
@@ -609,7 +612,7 @@ public class Cli {
                         break;
                     }
                     for(Student s: students) {
-                        System.out.println(s.getStudentName() + "-" + s.getSID() +  "-" + s.getUsername() + "-" + s.getPassword() + "-" + s.getTasks().size() + "-" + s.getCourses().size());
+                        System.out.println(s.getStudentName() + "-" + s.getSID() +  "-" + s.getUsername() + "-" + s.getPassword() + "-" + s.getTasks().size() + "-" + s.getCourses().size() + "-" + s.getAssignments().size());
                         for (Task t : s.getTasks())
                             System.out.println(t.serialize());
                     }

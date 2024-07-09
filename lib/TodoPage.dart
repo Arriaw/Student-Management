@@ -34,7 +34,7 @@ class TodoListPage extends StatefulWidget {
 class _TodoListPageState extends State<TodoListPage> {
   int _pageIndex = 3;
   List<Task> tasks = [];
-  String host = "192.168.1.36";
+  String host = "192.168.100.14";
   int port = 8080;
   late Future<void> _future;
 
