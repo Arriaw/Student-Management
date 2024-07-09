@@ -20,6 +20,7 @@ class _ClassesPageState extends State<ClassesPage> {
   String host = "192.168.100.14";
   int port = 8080;
   late Future<void> _future;
+  String res = '';
 
   static final List<Widget> _widgetOptions = <Widget>[
     AssignmentsPage(),
@@ -78,15 +79,15 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<void> addCourseToServer(String id) async {
+  Future<String> addCourseToServer(String id) async {
     String response = '';
     final completer = Completer<String>();
 
     try {
       final socket = await Socket.connect(host, port);
       print("Connected to server as addCourse");
-      socket.write('addClass~${202433000}~$id');
-      socket.flush();
+      socket.write('addClass~${202433000}~$id\u0000');
+      await socket.flush();
       socket.listen((data) {
         response = utf8.decode(data);
         print("addCourse response: ${response}");
@@ -96,13 +97,78 @@ class _ClassesPageState extends State<ClassesPage> {
     } catch (e) {
       print('Error: $e');
     }
+    try {
+      response = await completer.future;
+    } catch (e) {
+      print('Error processing response: $e');
+    }
+    return response;
   }
 
-  void _addCourse(String id) {
-    setState(() {
-      courses.add(Course(name: "1", unit: 1, teacherName: "1", topStudentName: "1", availableAssignmentsCount: 1));
-    });
-    addCourseToServer(id);
+  Future<void> _course200(String id) async {
+    String response = '';
+    final completer = Completer<String>();
+
+    try {
+      final socket = await Socket.connect(host, port);
+      print("connected to server as course200");
+      socket.write('classInfo~$id\u0000');
+      socket.flush();
+      socket.listen((data) {
+        response = utf8.decode(data);
+        print("addTask response: $response");
+        completer.complete(response);
+      });
+      socket.close();
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    try {
+      response = await completer.future;
+      print("The classInfo response is: ${response}");
+      setState(() {
+          courses.add(Course.fromString(response));
+        });
+    } catch (e) {
+      print('Error processing response: $e');
+    }
+  }
+
+  void _addCourse(String id) async {
+    String response = await addCourseToServer(id);
+    if (response == "404") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'کد گلستان درس اشتباه است',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else if (response == "400") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'در حال حاضر در کلاس هستید',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    } else {
+      _course200(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'کلاس با موفقیت اضافه شد',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 
   void _onBottomNavTapped(int index) {
@@ -155,7 +221,7 @@ class _ClassesPageState extends State<ClassesPage> {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    _addCourse(classIdController.text);
+                    addCourseToServer(classIdController.text);
                     Navigator.of(context).pop();
                   },
                   child: const Text(

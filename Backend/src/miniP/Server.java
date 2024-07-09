@@ -375,6 +375,7 @@ class ClientHandler extends Thread{
                         System.err.println("Error handling getClass request: " + e.getMessage());
                     } finally {
                         try {
+                            dos.flush();
                             dos.close();
                             dis.close();
                         } catch (IOException e) {
@@ -398,6 +399,7 @@ class ClientHandler extends Thread{
                     }
                     if (!courseFound) {
                         dos.writeUTF("404");
+                        dos.flush();
                         System.out.println("No course with this ID in database.");
                     } else {
                         List<Course> sCourses = new ArrayList<>();
@@ -419,6 +421,7 @@ class ClientHandler extends Thread{
                         if (courseFound) {
                             System.out.println("Already in this course");
                             dos.writeUTF("400");
+                            dos.flush();
                         }
                         else {
                             for (Student s : students) {
@@ -429,12 +432,37 @@ class ClientHandler extends Thread{
                                     break;
                                 }
                             }
-                            dos.writeUTF(course.serialize());
+                            dos.writeBytes("200");
+                            dos.flush();
                             System.out.println("Course added successfully");
                         }
                     }
                     dos.flush();
                     dos.close();
+                    break;
+                case "classInfo" :
+                    courseID = queryArr[1];
+                    courses = Admin.retrieveData(Course.class);
+
+                    try {
+                        for (Course c :courses) {
+                            if (c.getID().equals(courseID)) {
+                                dos.writeUTF(c.serialize());
+                                dos.flush();
+                                System.out.println(c.serialize());
+                                break;
+                            }
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Error handling classInfo request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
                     break;
                 case "getAssignments":
                     break;
