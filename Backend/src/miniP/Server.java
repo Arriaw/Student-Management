@@ -471,6 +471,26 @@ class ClientHandler extends Thread{
                     break;
                 case "getAssignments":
                     break;
+
+
+                case "getAssignmentsCount":
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    ArrayList<Assignment> assignments = Admin.retrieveData(Assignment.class);
+                    student = null;
+                    int cnt = 0;
+
+
+                    for(Student s : students){
+                        if(s.getSID().equals(sid)){
+                            student = s;
+                        }
+                    }
+
+//                    for(Assignment ass : assignments){
+//                        if(student.getasi)
+//                    }
+
             }
         } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             throw new RuntimeException(e);

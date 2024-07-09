@@ -27,7 +27,7 @@ class _ClassesPageState extends State<ClassesPage> {
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    Homepage(),
+    HomePage(),
   ];
 
   @override

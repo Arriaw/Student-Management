@@ -19,7 +19,7 @@ class _AssignmentsPage extends State<AssignmentsPage> {
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    Homepage()
+    HomePage()
   ];
 
   void _onBottomNavTapped(int index) {

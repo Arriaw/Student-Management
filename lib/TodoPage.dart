@@ -87,7 +87,7 @@ class _TodoListPageState extends State<TodoListPage> {
     }
   }
 
-  static final List<Widget> _widgetOptions = <Widget>[AssignmentsPage(), NewsPage(), ClassesPage(), TodoListPage(), Homepage()];
+  static final List<Widget> _widgetOptions = <Widget>[AssignmentsPage(), NewsPage(), ClassesPage(), TodoListPage(), HomePage()];
 
   void _onBottomNavTapped(int index) {
     setState(() {

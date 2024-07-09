@@ -2,6 +2,7 @@ import "dart:async";
 import "dart:convert";
 import "dart:io";
 
+import "package:arka_project/Homepage.dart";
 import "package:arka_project/SignUp.dart";
 import "package:arka_project/UserProfile.dart";
 import "package:flutter/gestures.dart";
@@ -409,17 +410,26 @@ class _SignInState extends State<SignIn> {
                       sidG = _usernameController.text;
 
 
+                      // Navigator.push(context,
+                      //   MaterialPageRoute(builder:
+                      //       (context) =>
+                      //       UserProfile(
+                      //         nameS: nameG,
+                      //         role: roleG,
+                      //         sid: sidG,
+                      //         currentTerm: currentTermG,
+                      //         vahed: vahedG,
+                      //         average: averageG,
+                      //         ImagePath: imagePathG,
+                      //       )
+                      //   ),
+                      // );
+
                       Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
-                            UserProfile(
-                              nameS: nameG,
-                              role: roleG,
-                              sid: sidG,
-                              currentTerm: currentTermG,
-                              vahed: vahedG,
-                              average: averageG,
-                              ImagePath: imagePathG,
+                            HomePage(
+                              // sid: sidG,
                             )
                         ),
                       );
