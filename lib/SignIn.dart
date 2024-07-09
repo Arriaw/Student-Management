@@ -2,8 +2,12 @@ import "dart:async";
 import "dart:convert";
 import "dart:io";
 
+import "package:arka_project/SignUp.dart";
 import "package:arka_project/UserProfile.dart";
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
+import "package:fluttertoast/fluttertoast.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class SignIn extends StatefulWidget {
   @override
@@ -11,6 +15,21 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  }
+
+
+  bool _obscurePassword = true;
   bool UserIdChecker = false;
   bool PasswordChecker = false;
   bool chekcerRun = false;
@@ -28,6 +47,13 @@ class _SignInState extends State<SignIn> {
 
   void _printPassword() {
     print('Username: ${_passwordController}');
+  }
+
+
+  Future<void> _launchInWebView(Uri url) async{
+    if(!await launchUrl(url , mode: LaunchMode.inAppWebView)){
+      throw Exception('Could not launch $url');
+    }
   }
 
 
@@ -71,8 +97,14 @@ class _SignInState extends State<SignIn> {
     return response;
   }
 
+
   @override
   Widget build(BuildContext context) {
+    
+    
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     String nameG = '';
     String roleG = '';
     String sidG = '';
@@ -128,29 +160,7 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
             ),
-
-            Positioned(
-              left: 40,
-              top: 560,
-              width: 300,
-              height: 50,
-              child: Container(
-                alignment: Alignment.center,
-                child: Text(
-                  (UserIdChecker && PasswordChecker) | !chekcerRun
-                      ? ''
-                      : UserIdChecker
-                          ? 'خطا در ورود: رمز وارد شده درست نمی باشد!'
-                          : 'خطا در ورود: شماره دانشجویی وارد شده \nدر سیستم ثبت نشده است. ثبت نام کنید',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontFamily: 'Lato',
-                    color: Colors.redAccent,
-                  ),
-                ),
-              ),
-            ),
-
+            
             Positioned(
               left: 94,
               top: 144,
@@ -170,9 +180,40 @@ class _SignInState extends State<SignIn> {
             ),
 
             Positioned(
-              left: 94,
+                top: 670,
+                left: screenWidth *0.3,
+                child: TextButton(
+                  onPressed: () => setState(() {
+                    _launchInWebView(Uri.parse("https://lms2.sbu.ac.ir"));
+                  }),
+                  child: const Text("ورود به سامانه یادگیری مجازی", style: TextStyle(color: Colors.blueAccent , fontSize: 11), ),
+                )),
+
+            Positioned(
+              top: 710,
+              left: (screenWidth *0.45) ,
+
+              child: Image.asset(
+
+                // 'assets/images.jpeg',
+                'Backend/Images/sbu.png',
+
+                // imgpath,
+
+                //   'Backend/Images/202463603.jpg',
+                // "Backend/Images/202423104.jpg",
+                width: 40,
+                height: 40,
+                // fit: BoxFit.cover,
+
+              ),
+            ),
+
+
+            Positioned(
+              left: 74,
               top: 246,
-              width: 203,
+              width: 250,
               height: 30,
               child: Container(
                 alignment: Alignment.center,
@@ -187,8 +228,8 @@ class _SignInState extends State<SignIn> {
             ),
 
             Positioned(
-              left: 91,
-              top: 750,
+              left: 155,
+              top: 488,
               width: 209,
               height: 24,
               child: Container(
@@ -207,6 +248,13 @@ class _SignInState extends State<SignIn> {
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                         ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignUp()),
+                          );
+                          }
                       ),
                     ],
                   ),
@@ -214,23 +262,23 @@ class _SignInState extends State<SignIn> {
               ),
             ),
 
-            Positioned(
-              left: 150,
-              top: 488,
-              width: 200,
-              height: 24,
-              child: Container(
-                alignment: Alignment.center,
-                child: Text(
-                  'رمز عبور خود را فراموش کرده ام',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontFamily: 'Lato',
-                    color: Color(0xFFBEBEBE),
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   left: 150,
+            //   top: 488,
+            //   width: 200,
+            //   height: 24,
+            //   child: Container(
+            //     alignment: Alignment.center,
+            //     child: Text(
+            //       'رمز عبور خود را فراموش کرده ام',
+            //       style: TextStyle(
+            //         fontSize: 15,
+            //         fontFamily: 'Lato',
+            //         color: Color(0xFFBEBEBE),
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             Positioned(
               left: 201,
@@ -286,6 +334,8 @@ class _SignInState extends State<SignIn> {
               ),
             ),
 
+
+
             Positioned(
               left: 45,
               top: 404,
@@ -307,6 +357,7 @@ class _SignInState extends State<SignIn> {
                 alignment: Alignment.center,
                 child: TextField(
                   controller: _passwordController,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Password',
@@ -316,7 +367,21 @@ class _SignInState extends State<SignIn> {
                       prefixIcon: Icon(
                         Icons.lock,
                         color: Color(0xFF9A9A9A),
-                      )),
+                      ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        color: Color(0xFF9A9A9A),
+                      ),
+                      onPressed: () {
+                        // Toggle the state of obscurePassword
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                  ),
+
                 ),
               ),
             ),
@@ -328,34 +393,43 @@ class _SignInState extends State<SignIn> {
               height: 34,
               child: ElevatedButton(
                 onPressed: () async {
-                  print("hello");
-                  res = await login();
+                  if (_usernameController.text.isEmpty ||
+                      _passwordController.text.isEmpty) {
+                    showToast("پرکردن تمام فیلد ها الزامی است !");
 
-                  if(res == "200"){
-                    print('this res is ' + res);
-                    res = '0';
+                  }else{
+                    print("hello");
+                    res = await login();
 
-                    // String resUserInfo  = await getUserInfo();
-                    sidG = _usernameController.text;
-                    // List<String> resList = resUserInfo.split("~");
-                    // nameG = resList[0];
-                    // print("the name is : " + resUserInfo);
-                    // roleG = resList[1];
-                    // sidG = resList[2];
-                    // currentTermG = resList[3];
-                    // vahedG = resList[4];
-                    // averageG = resList[5];
+                    if (res == "200") {
+                      print('this res is ' + res);
+                      res = '0';
 
-                    Navigator.push(context,
-                      MaterialPageRoute(builder:
-                      (context) => UserProfile(
-                        nameS: nameG,
-                        role: roleG, sid: sidG, currentTerm: currentTermG, vahed: vahedG, average: averageG, ImagePath: imagePathG,
-                      )
-                      ),
-                    );
+                      sidG = _usernameController.text;
+
+
+                      Navigator.push(context,
+                        MaterialPageRoute(builder:
+                            (context) =>
+                            UserProfile(
+                              nameS: nameG,
+                              role: roleG,
+                              sid: sidG,
+                              currentTerm: currentTermG,
+                              vahed: vahedG,
+                              average: averageG,
+                              ImagePath: imagePathG,
+                            )
+                        ),
+                      );
+                    }else if (res == "401"){
+                      showToast('خطا در ورود: رمز وارد شده درست نمی باشد!');
+                    }else if(res == "404"){
+                      showToast('خطا در ورود: شماره دانشجویی وارد شده \nدر سیستم ثبت نشده است. ثبت نام کنید');
+                    }
                   }
                 },
+
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all(Colors.transparent),

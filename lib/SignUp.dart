@@ -4,7 +4,10 @@ import 'dart:io';
 
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'SignIn.dart';
+
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUp extends StatefulWidget{
   @override
@@ -18,20 +21,29 @@ class _SignUpstate extends State<SignUp>{
   String host = "192.168.1.36";
   int port = 4050;
 
+
+
   TextEditingController name = new TextEditingController();
   TextEditingController ID = new TextEditingController();
   String? role;
 
   String response = '';
+  String sidr=  "";
   bool flag = false;
   bool CheckRun = false;
+  
+  
+  Future<void> _launchInWebView(Uri url) async{
+    if(!await launchUrl(url , mode: LaunchMode.inAppWebView)){
+      throw Exception('Could not launch $url');
+    }
+  }
+
 
 
   Future<String> signupm() async {
     final completer = Completer<String>();
-
-
-
+    
     await Socket.connect(host, 4050).then((serverSocket) {
       String mess = "SignUp-${name.text}-${ID.text}-${role}\u0000";
       // serverSocket.write(
@@ -49,15 +61,30 @@ class _SignUpstate extends State<SignUp>{
 
     response = await completer.future;
     print('the response is : ${response}');
+    sidr = response;
 
     CheckRun = true;
 
     return response;
 
   }
+  void showToast(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
       home: Scaffold(
@@ -284,6 +311,36 @@ class _SignUpstate extends State<SignUp>{
               ),
             ),
 
+            Positioned(
+              top: 670,
+              left: screenWidth *0.3,
+              child: TextButton(
+                onPressed: () => setState(() {
+                  _launchInWebView(Uri.parse("https://lms2.sbu.ac.ir"));
+                }),
+                child: const Text("ورود به سامانه یادگیری مجازی", style: TextStyle(color: Colors.blueAccent , fontSize: 11), ),
+              )),
+
+            Positioned(
+              top: 710,
+              left: (screenWidth *0.45) ,
+
+                child: Image.asset(
+
+                  // 'assets/images.jpeg',
+                  'Backend/Images/sbu.png',
+
+                  // imgpath,
+
+                  //   'Backend/Images/202463603.jpg',
+                  // "Backend/Images/202423104.jpg",
+                  width: 40,
+                  height: 40,
+                  // fit: BoxFit.cover,
+
+              ),
+            ),
+
 
 
             Positioned(
@@ -293,22 +350,52 @@ class _SignUpstate extends State<SignUp>{
                 height: 34,
                 child: ElevatedButton(
                   onPressed: () async {
-                    print("SignUp-${name.text}-${ID.text}-${role}");
-                    signupm();
-
-                    if(response == "401"){
-                      print("the id ${ID.text} is already taken !");
-
-
+                    
+                    
+                    if(name.text.isEmpty || ID.text.isEmpty || role == ''){
+                      showToast("پرکردن تمام فیلد ها الزامی است !");
                     }else {
-                      print("the user ${name.text} created successfully with SID : ${response}");
-                      flag = true;
+                      print("SignUp-${name.text}-${ID.text}-${role}");
+                      response = await signupm();
 
 
-                      await Future.delayed(Duration(seconds: 2));
+                      if (response == "401" ) {
+                        print("the id ${ID.text} is already taken !");
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
-                    }
+                        showToast("خطا در ثبت: اسم یا کد ملی تکراری است");
+                      }else if(response == ''){
+                        await Future.delayed(Duration(seconds: 2));
+                        if(response == ''){
+                          showToast("خطا در برقراری ارتباط با سرور !");
+                          print("end of time");
+                        }else {
+                          print("the user ${name.text} created successfully with SID : ${response}");
+                          flag = true;
+
+                          showToast("${response} اضافه شد . sid:${name}");
+
+
+                          await Future.delayed(Duration(seconds: 2));
+
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => SignIn()));
+                        }
+
+
+                      }else {
+                        print("the user ${name.text} created successfully with SID : ${response}");
+                        flag = true;
+
+                        showToast("${name.text} اضافه شد\n . sid:${sidr}");
+
+
+                        await Future.delayed(Duration(seconds: 2));
+
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SignIn()));
+                      }
+                                          }
+
 
                   },
                   style: ButtonStyle(
@@ -346,31 +433,31 @@ class _SignUpstate extends State<SignUp>{
                 )
             ),
 
-            Positioned(
-              left: 48,
-              top: 550 ,
-              width: 300,
-              height: 43,
-              child: Container(
-                alignment: Alignment.center,
-
-                child: Text(
-                  CheckRun
-                      ? flag
-                        ? 'اضافه شد ${name.text}'
-                        : 'خطا در ثبت: اسم یا کد ملی تکراری است'
-                  : "" ,
-
-                  style: TextStyle(fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color:flag
-                        ? Colors.green
-                        : Colors.redAccent,
-                    fontFamily: 'Bnazanin',
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   left: 48,
+            //   top: 550 ,
+            //   width: 300,
+            //   height: 43,
+            //   child: Container(
+            //     alignment: Alignment.center,
+            //
+            //     child: Text(
+            //       CheckRun
+            //           ? flag
+            //             ? 'اضافه شد ${name.text}'
+            //             : 'خطا در ثبت: اسم یا کد ملی تکراری است'
+            //       : "" ,
+            //
+            //       style: TextStyle(fontSize: 15,
+            //         fontWeight: FontWeight.bold,
+            //         color:flag
+            //             ? Colors.green
+            //             : Colors.redAccent,
+            //         fontFamily: 'Bnazanin',
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             Positioned(
               left: 120,
@@ -406,8 +493,14 @@ class _SignUpstate extends State<SignUp>{
         ),
       ),
 
+
+
     );
+
+
   }
+
+  // Positioned(top : 425, left: s)
 
 }
 
@@ -479,6 +572,9 @@ class WaveClipper extends CustomClipper<Path> {
     path.close();
     return path;
   }
+
+
+
 
 
 
