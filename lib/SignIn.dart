@@ -69,7 +69,7 @@ class _SignInState extends State<SignIn> {
     print("i'm hewre");
     print(_usernameController.text + " " + _passwordController.text);
 
-    await Socket.connect('192.168.100.14',8080).then((serverSocket) {
+    await Socket.connect('192.168.1.36',8080).then((serverSocket) {
       serverSocket.write(
           "LoginChecker~${_usernameController.text}~${_passwordController
               .text}\u0000");
@@ -428,7 +428,7 @@ class _SignInState extends State<SignIn> {
                       Navigator.push(context,
                         MaterialPageRoute(builder:
                             (context) =>
-                            HomePage(
+                            MyApp(sidM: sidG,
                               // sid: sidG,
                             )
                         ),

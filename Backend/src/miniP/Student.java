@@ -258,4 +258,6 @@ public class Student implements Serializable{
     public List<Assignment> getNotFinishedAssignments() {
         return notFinishedAssignments;
     }
+
+    public Map<Course, Double> getCoursesScore(){return coursesScore;}
 }

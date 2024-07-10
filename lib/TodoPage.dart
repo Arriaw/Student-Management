@@ -34,7 +34,7 @@ class TodoListPage extends StatefulWidget {
 class _TodoListPageState extends State<TodoListPage> {
   int _pageIndex = 3;
   List<Task> tasks = [];
-  String host = "192.168.100.14";
+  String host = "192.168.1.36";
   int port = 8080;
   late Future<void> _future;
 
@@ -87,7 +87,7 @@ class _TodoListPageState extends State<TodoListPage> {
     }
   }
 
-  static final List<Widget> _widgetOptions = <Widget>[AssignmentsPage(), NewsPage(), ClassesPage(), TodoListPage(), HomePage()];
+  static final List<Widget> _widgetOptions = <Widget>[AssignmentsPage(), NewsPage(), ClassesPage(), TodoListPage(), Homepage(sid: '',)];
 
   void _onBottomNavTapped(int index) {
     setState(() {

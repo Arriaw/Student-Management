@@ -37,7 +37,7 @@ class AssignmentsPage extends StatefulWidget {
 
 class _AssignmentsPageState extends State<AssignmentsPage> {
   int _pageIndex = 0;
-  String host = "192.168.100.14";
+  String host = "192.168.1.36";
   int port = 8080;
   late Future<void> _future;
   List<Assignment> assignments = [];
@@ -47,7 +47,7 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    Homepage(),
+    Homepage(sid: '',),
   ];
 
   void _onBottomNavTapped(int index) {

@@ -1,14 +1,26 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
-void main() {
-  runApp(MyApp());
-}
+import 'package:flutter/material.dart';
+import 'News.dart';
+import 'Classes.dart';
+import 'TodoPage.dart';
+import 'Assignments.dart';
+import 'UserProfile.dart';
+
+// void main() {
+//   runApp(MyApp());
+// }
 
 class MyApp extends StatelessWidget {
+  String sidM;
+  MyApp({required this.sidM});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: Homepage(sid: sidM,),
       routes: {
         '/profile': (context) => ProfilePage(),
       },
@@ -16,7 +28,45 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class Homepage extends StatefulWidget {
+  String sid;
+  Homepage({
+    required this.sid,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _Homepage();
+}
+
+class _Homepage extends State<Homepage> {
+  String sidR = '';
+  int _pageIndex = 4;
+
+  late List<Widget> _widgetOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    sidR = widget.sid;
+
+
+    _widgetOptions = <Widget>[
+      AssignmentsPage(),
+      NewsPage(),
+      ClassesPage(),
+      TodoListPage(),
+      Homepage(sid: sidR,)
+    ];
+  }
+  void _onBottomNavTapped(int index) {
+    setState(() {
+      _pageIndex = index;
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => _widgetOptions[index])
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +80,21 @@ class HomePage extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.person, color: Colors.blue),
               onPressed: () {
-                Navigator.pushNamed(context, '/profile');
+                Navigator.push(context,
+                  MaterialPageRoute(builder:
+                      (context) =>
+                      UserProfile(
+                        nameS: "",
+                        role: "",
+                        sid: sidR,
+                        currentTerm: "",
+                        vahed: "",
+                        average: "",
+                        ImagePath: "",
+                      )
+                  ),
+                );
+
               },
             ),
           ),
@@ -38,11 +102,11 @@ class HomePage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SummarySection(),
+              SummarySection(sid: sidR,),
               SizedBox(height: 20),
               CurrentTasksSection(),
               SizedBox(height: 20),
@@ -52,32 +116,36 @@ class HomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        showUnselectedLabels: true,
+        iconSize: 30,
+        selectedFontSize: 17,
+        unselectedFontSize: 14,
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'سرویس',
+            icon: Icon(Icons.assignment),
+            label: 'تمرین ها',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.volume_up),
-            label: 'نمرات',
+            icon: Icon(Icons.add_alert),
+            label: 'خبر ها',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
-            label: 'کلاس‌ها',
+            label: 'کلاس ها',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'کارتابل',
+            icon: Icon(Icons.task),
+            label: 'کار ها',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'پروفایل',
+            icon: Icon(Icons.home),
+            label: 'سرا',
           ),
         ],
-        currentIndex: 0,
-        selectedItemColor: Colors.pink,
+        currentIndex: _pageIndex,
+        selectedItemColor: const Color.fromRGBO(31, 48, 110, 1),
         unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        onTap: _onBottomNavTapped,
       ),
     );
   }
@@ -97,7 +165,155 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class SummarySection extends StatelessWidget {
+class SummarySection extends StatefulWidget{
+  String sid ;
+  SummarySection({required this.sid});
+  @override
+  _SummarySectionstate createState() => _SummarySectionstate();
+}
+
+class _SummarySectionstate extends State<SummarySection> {
+  String response = '';
+  int port = 8080;
+  String host = '192.168.1.36';
+
+
+  String CountAllAssignments = '0';
+  String BestScore = '';
+  String WorthScore= '';
+  List<Task> tasks = [];
+  late Future<void> _future;
+
+
+  Future<String> getCountAssignments() async {
+    final completer  = Completer<String>();
+
+    print("i'm hewre");
+
+    await Socket.connect(host,port).then((serverSocket) {
+      serverSocket.write("getAssignmentsCount~${widget.sid}\u0000");
+      serverSocket.flush();
+      serverSocket.listen((socketResponse) {
+        setState(() {
+          response = String.fromCharCodes(socketResponse);
+        });
+        completer.complete(response);
+      });
+    });
+
+    response = await completer.future;
+
+    CountAllAssignments = response;
+
+    print("the count is : ${CountAllAssignments}");
+
+    return response;
+  }
+
+  Future<String> getBestScore() async {
+    final completer  = Completer<String>();
+
+    print("i'm hewre");
+
+    await Socket.connect(host,port).then((serverSocket) {
+      serverSocket.write("getBestScore~${widget.sid}\u0000");
+      serverSocket.flush();
+      serverSocket.listen((socketResponse) {
+        setState(() {
+          response = String.fromCharCodes(socketResponse);
+        });
+        completer.complete(response);
+      });
+    });
+
+    response = await completer.future;
+
+    BestScore = response;
+
+    print("the BestScore is : ${BestScore}");
+
+    return response;
+  }
+
+  Future<String> getWorthScore() async {
+    final completer  = Completer<String>();
+
+    print("i'm hewre");
+
+    await Socket.connect(host,port).then((serverSocket) {
+      serverSocket.write("getWorthScore~${widget.sid}\u0000");
+      serverSocket.flush();
+      serverSocket.listen((socketResponse) {
+        setState(() {
+          response = String.fromCharCodes(socketResponse);
+        });
+        completer.complete(response);
+      });
+    });
+
+    response = await completer.future;
+
+    WorthScore = response;
+
+    print("the BestScore is : ${WorthScore}");
+
+    return response;
+  }
+
+
+  Future<void> getTasks() async {
+    String response = '';
+    final completer = Completer<String>();
+    print("Connecting to server as getTask ...");
+    try {
+      final socket = await Socket.connect(host, port);
+      socket.write("getTasks~${widget.sid}\u0000");
+      await socket.flush();
+      print("Connected to server as getTask");
+
+      socket.listen((data) {
+        response = utf8.decode(data.sublist(2));
+        completer.complete(response);
+        socket.destroy();
+      }, onError: (error) {
+        print('Error: $error');
+        completer.completeError(error);
+      }, onDone: () {
+        if (!completer.isCompleted) {
+          completer.complete(response);
+        }
+        socket.destroy();
+      });
+    } catch (e) {
+      print('Error: $e');
+      completer.completeError(e);
+    }
+
+    try {
+      response = await completer.future;
+      print("The getTask response is: ${response}");
+      if (response == "404") {
+        print("no tasks yet");
+      } else {
+        setState(() {
+          tasks = response.split('\n').where((task) => task.isNotEmpty).map((task) => Task.fromString(task)).toList();
+        });
+      }
+    } catch (e) {
+      print('Error processing response: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCountAssignments();
+    getBestScore();
+    getWorthScore();
+    _future = getTasks();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -119,11 +335,11 @@ class SummarySection extends StatelessWidget {
             runSpacing: 10, // Space between lines
             alignment: WrapAlignment.start,
             children: [
-              SummaryCard('بهترین نمره هفته', Icons.star),
+              SummaryCard('بهترین نمره ات : ${BestScore}', Icons.star),
               SummaryCard('2 تا امتحان داری', Icons.favorite_border),
-              SummaryCard('3 تا تمرین داری', Icons.alarm),
+              SummaryCard('${CountAllAssignments}  تا تمرین داری', Icons.alarm),
               SummaryCard('3 تا ددلاین بریده', Icons.notifications),
-              SummaryCard('بدترین نمره هفته', Icons.sentiment_very_dissatisfied),
+              SummaryCard('بدترین نمره ات : ${WorthScore}', Icons.sentiment_very_dissatisfied),
             ],
           ),
         ),
@@ -159,6 +375,7 @@ class SummaryCard extends StatelessWidget {
 }
 
 class CurrentTasksSection extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -170,11 +387,15 @@ class CurrentTasksSection extends StatelessWidget {
           textAlign: TextAlign.right, // Align text to the right
         ),
         SizedBox(height: 10),
+        for(Task ta : ){
+
+        }
         TaskItem('آز ریز - تمرین 1'),
         TaskItem('تست - تمرین 1'),
       ],
     );
   }
+
 }
 
 class TaskItem extends StatelessWidget {

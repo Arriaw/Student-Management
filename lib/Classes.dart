@@ -17,7 +17,7 @@ class ClassesPage extends StatefulWidget {
 class _ClassesPageState extends State<ClassesPage> {
   int _pageIndex = 2;
   List<Course> courses = [];
-  String host = "192.168.100.14";
+  String host = "192.168.1.36";
   int port = 8080;
   late Future<void> _future;
   String res = '';
@@ -27,7 +27,7 @@ class _ClassesPageState extends State<ClassesPage> {
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    HomePage(),
+    Homepage(sid: '',),
   ];
 
   @override

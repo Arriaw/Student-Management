@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'News.dart';
 import 'Classes.dart';
@@ -12,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Homepage(),
+      home: Homepage(sid: '',),
       routes: {
         '/profile': (context) => ProfilePage(),
       },
@@ -21,6 +24,11 @@ class MyApp extends StatelessWidget {
 }
 
 class Homepage extends StatefulWidget {
+  String sid;
+  Homepage({
+    required this.sid,
+  });
+
   @override
   State<StatefulWidget> createState() => _Homepage();
 }
@@ -33,7 +41,7 @@ class _Homepage extends State<Homepage> {
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    Homepage()
+    Homepage(sid: '',)
   ];
 
   void _onBottomNavTapped(int index) {
@@ -129,7 +137,47 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class SummarySection extends StatelessWidget {
+class SummarySection extends StatefulWidget{
+  @override
+  _SummarySectionstate createState() => _SummarySectionstate();
+}
+
+class _SummarySectionstate extends State<SummarySection> {
+  String response = '';
+  int port = 8080;
+  String host = '192.168.1.36';
+
+
+  String CountAllAssignments = '0';
+
+  Future<String> login() async {
+    final completer  = Completer<String>();
+
+    print("i'm hewre");
+
+    await Socket.connect(host,port).then((serverSocket) {
+      serverSocket.write("getAssignmentsCount~202433000\u0000");
+      serverSocket.flush();
+      serverSocket.listen((socketResponse) {
+        setState(() {
+          response = String.fromCharCodes(socketResponse);
+        });
+        completer.complete(response);
+      });
+    });
+
+    response = await completer.future;
+
+
+
+    return response;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -153,7 +201,7 @@ class SummarySection extends StatelessWidget {
             children: [
               SummaryCard('بهترین نمره هفته', Icons.star),
               SummaryCard('2 تا امتحان داری', Icons.favorite_border),
-              SummaryCard('3 تا تمرین داری', Icons.alarm),
+              SummaryCard('${CountAllAssignments}  تا تمرین داری', Icons.alarm),
               SummaryCard('3 تا ددلاین بریده', Icons.notifications),
               SummaryCard('بدترین نمره هفته', Icons.sentiment_very_dissatisfied),
             ],

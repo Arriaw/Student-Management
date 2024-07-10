@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Server {
     public static void main(String[] args) throws IOException {
@@ -505,6 +507,7 @@ class ClientHandler extends Thread{
                         }
                     }
                     break;
+
                 case "getNotFinishedAssignments":
                     sid = queryArr[1];
                     students = Admin.retrieveData(Student.class);
@@ -544,12 +547,47 @@ class ClientHandler extends Thread{
 
 
                 case "getAssignmentsCount":
+
                     sid = queryArr[1];
                     students = Admin.retrieveData(Student.class);
-                    ArrayList<Assignment> assignments = Admin.retrieveData(Assignment.class);
-                    student = null;
-                    int cnt = 0;
+                    assignments =  new ArrayList<>();
+                    int count = 0 ;
 
+                    try {
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                System.out.println("Student found");
+                                assignments = s.getAssignments();
+                                break;
+                            }
+                        }
+
+                        if (assignments.isEmpty()) {
+                            dos.writeBytes("0");
+                            System.out.println("No tasks available for SID: " + sid);
+                        } else {
+                            dos.writeBytes(String.valueOf((assignments.size())));
+                        }
+
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.err.println("Error handling getAssignments request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+                case "getBestScore":
+                    students = Admin.retrieveData(Student.class);
+                    student = null;
+                    sid = queryArr[1];
+
+                    double maxScore = 0;
 
                     for(Student s : students){
                         if(s.getSID().equals(sid)){
@@ -557,9 +595,89 @@ class ClientHandler extends Thread{
                         }
                     }
 
-//                    for(Assignment ass : assignments){
-//                        if(student.getasi)
-//                    }
+                    Map<Course, Double> cscore = student.getCoursesScore();
+
+                    Set<Course> keys = cscore.keySet();
+
+                    for(Course c: keys){
+                        if(cscore.get(c) > maxScore){
+                            maxScore = cscore.get(c);
+                        }
+                    }
+
+                    dos.writeBytes(String.valueOf(maxScore));
+                    dos.flush();
+                    dos.close();
+                    break;
+
+                case "getWorthScore":
+                    students = Admin.retrieveData(Student.class);
+                    student = null;
+                    sid = queryArr[1];
+
+                    double minScore = 0;
+
+                    for(Student s : students){
+                        if(s.getSID().equals(sid)){
+                            student = s;
+                        }
+                    }
+
+                    cscore = student.getCoursesScore();
+
+                    keys = cscore.keySet();
+
+                    for(Course c: keys){
+                        if(cscore.get(c) < minScore){
+                            maxScore = cscore.get(c);
+                        }
+                    }
+
+                    dos.writeBytes(String.valueOf(minScore));
+                    dos.flush();
+                    dos.close();
+                    break;
+
+                case "getActiveAssignments" :
+                    sid = queryArr[1];
+                    students = Admin.retrieveData(Student.class);
+                    assignments =  new ArrayList<>();
+
+                    try {
+                        for (Student s : students) {
+                            if (s.getSID().equals(sid)) {
+                                System.out.println("Student found");
+                                assignments = s.getAssignments();
+                                break;
+                            }
+                        }
+
+                        if (assignments.isEmpty()) {
+                            dos.writeBytes("404");
+                            System.out.println("No tasks available for SID: " + sid);
+                        } else {
+                            for (Assignment a : assignments) {
+                                if(a.isActive()) {
+                                    dos.writeUTF(a.getName());
+                                    System.out.println(a.serializeAll());
+                                }
+                            }
+                        }
+
+                        dos.flush();
+                    } catch (IOException e) {
+                        System.err.println("Error handling getAssignments request: " + e.getMessage());
+                    } finally {
+                        try {
+                            dos.close();
+                            dis.close();
+                        } catch (IOException e) {
+                            System.err.println("Error closing streams: " + e.getMessage());
+                        }
+                    }
+                    break;
+
+
 
             }
         } catch (IOException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {

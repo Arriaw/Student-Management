@@ -1,3 +1,4 @@
+import 'package:arka_project/SignIn.dart';
 import 'package:flutter/material.dart';
 
 import 'SignUp.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget{
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SignUp(),
+      home: SignIn(),
     );
   }
 }

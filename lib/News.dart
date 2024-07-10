@@ -46,7 +46,7 @@ class _NewsPageState extends State<NewsPage> {
     NewsPage(),
     ClassesPage(),
     TodoListPage(),
-    HomePage()
+    Homepage(sid: '',)
   ];
 
   final List<Widget> _tabs = [
