@@ -6,6 +6,8 @@ import 'Assignments.dart';
 import 'Homepage.dart';
 
 class NewsPage extends StatefulWidget {
+  String sid;
+  NewsPage({required this.sid, });
   @override
   _NewsPageState createState() => _NewsPageState();
 }
@@ -39,15 +41,10 @@ class JalaliDateWidget extends StatelessWidget {
 class _NewsPageState extends State<NewsPage> {
   int _currentIndex;
   int _pageIndex = 1;
+  String sidR = '';
   final ScrollController _scrollController = ScrollController();
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    AssignmentsPage(),
-    NewsPage(),
-    ClassesPage(),
-    TodoListPage(),
-    Homepage(sid: '',)
-  ];
+  late List<Widget> _widgetOptions;
 
   final List<Widget> _tabs = [
     NewsContent('تمدید ها'),
@@ -69,6 +66,14 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     super.initState();
+    sidR = widget.sid;
+    _widgetOptions = <Widget>[
+      AssignmentsPage(sid: sidR,),
+      NewsPage(sid: sidR,),
+      ClassesPage(sid: sidR,),
+      TodoListPage(sid: sidR,),
+      Homepage(sid: sidR,)
+    ];
     // Ensure the scroll starts at the rightmost position
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);

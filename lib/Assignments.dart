@@ -31,24 +31,23 @@ class Assignment {
 }
 
 class AssignmentsPage extends StatefulWidget {
+  String sid;
+
+  AssignmentsPage({required this.sid,});
   @override
   State<StatefulWidget> createState() => _AssignmentsPageState();
 }
 
 class _AssignmentsPageState extends State<AssignmentsPage> {
+  String sidR = '';
   int _pageIndex = 0;
   String host = "192.168.1.36";
   int port = 8080;
   late Future<void> _future;
   List<Assignment> assignments = [];
+  late  List<Widget> _widgetOptions;
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    AssignmentsPage(),
-    NewsPage(),
-    ClassesPage(),
-    TodoListPage(),
-    Homepage(sid: '',),
-  ];
+
 
   void _onBottomNavTapped(int index) {
     setState(() {
@@ -64,6 +63,15 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
   void initState() {
     super.initState();
     _future = getAssignments();
+    sidR = widget.sid;
+    _widgetOptions = <Widget>[
+      AssignmentsPage(sid: sidR,),
+      NewsPage(sid: sidR,),
+      ClassesPage(sid: sidR,),
+      TodoListPage(sid: sidR,),
+      Homepage(sid: sidR,),
+    ];
+
   }
 
   Future<void> getAssignments() async {
@@ -72,8 +80,9 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
 
     print("Connecting to server to get all assignments...");
     try {
+
       final socket = await Socket.connect(host, port);
-      socket.write("getAllAssignments~202433000\u0000");
+      socket.write("getAllAssignments~${widget.sid}\u0000");
       await socket.flush();
       socket.listen((data) {
         allAssignmentsResponse = utf8.decode(data.sublist(2));

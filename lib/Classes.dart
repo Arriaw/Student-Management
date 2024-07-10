@@ -10,6 +10,8 @@ import 'TodoPage.dart';
 import 'Homepage.dart';
 
 class ClassesPage extends StatefulWidget {
+  String sid;
+  ClassesPage({required this.sid,});
   @override
   State<StatefulWidget> createState() => _ClassesPageState();
 }
@@ -22,18 +24,25 @@ class _ClassesPageState extends State<ClassesPage> {
   late Future<void> _future;
   String res = '';
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    AssignmentsPage(),
-    NewsPage(),
-    ClassesPage(),
-    TodoListPage(),
-    Homepage(sid: '',),
-  ];
+  String sidR = '';
+
+  late List<Widget> _widgetOptions;
+
+
 
   @override
   void initState() {
     super.initState();
     _future = getClasses();
+    sidR = widget.sid;
+
+    _widgetOptions = <Widget>[
+      AssignmentsPage(sid: sidR,),
+      NewsPage(sid: sidR,),
+      ClassesPage(sid: sidR,),
+      TodoListPage(sid: sidR,),
+      Homepage(sid: sidR,),
+    ];
   }
 
   Future<void> getClasses() async {

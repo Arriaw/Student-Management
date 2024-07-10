@@ -27,6 +27,8 @@ class Task {
 }
 
 class TodoListPage extends StatefulWidget {
+  String sid;
+  TodoListPage({required this.sid});
   @override
   _TodoListPageState createState() => _TodoListPageState();
 }
@@ -37,11 +39,16 @@ class _TodoListPageState extends State<TodoListPage> {
   String host = "192.168.1.36";
   int port = 8080;
   late Future<void> _future;
+  String sidR = '';
+  late List<Widget> _widgetOptions;
+
 
   @override
   void initState() {
     super.initState();
     _future = getTasks();
+    sidR = widget.sid;
+    _widgetOptions = <Widget>[AssignmentsPage(sid: sidR,), NewsPage(sid: sidR,), ClassesPage(sid: sidR,), TodoListPage(sid: sidR,), Homepage(sid: sidR,)];
   }
 
   Future<void> getTasks() async {
@@ -50,7 +57,7 @@ class _TodoListPageState extends State<TodoListPage> {
     print("Connecting to server as getTask ...");
     try {
       final socket = await Socket.connect(host, port);
-      socket.write("getTasks~${202433000}\u0000");
+      socket.write("getTasks~${widget.sid}\u0000");
       await socket.flush();
       print("Connected to server as getTask");
 
@@ -87,7 +94,6 @@ class _TodoListPageState extends State<TodoListPage> {
     }
   }
 
-  static final List<Widget> _widgetOptions = <Widget>[AssignmentsPage(), NewsPage(), ClassesPage(), TodoListPage(), Homepage(sid: '',)];
 
   void _onBottomNavTapped(int index) {
     setState(() {

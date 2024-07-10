@@ -51,10 +51,10 @@ class _Homepage extends State<Homepage> {
 
 
     _widgetOptions = <Widget>[
-      AssignmentsPage(),
-      NewsPage(),
-      ClassesPage(),
-      TodoListPage(),
+      AssignmentsPage(sid: sidR,),
+      NewsPage(sid: sidR,),
+      ClassesPage(sid: sidR,),
+      TodoListPage(sid: sidR,),
       Homepage(sid: sidR,)
     ];
   }
@@ -387,9 +387,9 @@ class CurrentTasksSection extends StatelessWidget {
           textAlign: TextAlign.right, // Align text to the right
         ),
         SizedBox(height: 10),
-        for(Task ta : ){
 
-        }
+
+
         TaskItem('آز ریز - تمرین 1'),
         TaskItem('تست - تمرین 1'),
       ],
