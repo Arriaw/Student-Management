@@ -131,7 +131,7 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
     try {
       final socket = await Socket.connect(host, port);
       print("connected to server as toggleAssignment");
-      socket.write('toggleAssignment~${202433000}~${assignment.name}~${assignment.dueTime.toString()}~${assignment.isDone}\u0000');
+      socket.write('toggleAssignment~${widget.sid}~${assignment.name}~${assignment.dueTime.toString()}~${assignment.isDone}\u0000');
       socket.flush();
       socket.listen((data) {
         response = utf8.decode(data);

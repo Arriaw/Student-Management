@@ -164,7 +164,11 @@ public class Course implements Serializable {
     public Student getTopStudent() {
         List<Map.Entry<Student, Double>> sortedEntries = new ArrayList<>(studentScores.entrySet());
         sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
-        this.topStudent = sortedEntries.getFirst().getKey();
+        if(sortedEntries.getFirst().getKey() == null){
+            System.out.println("it is null!");
+            this.topStudent = new Student("هیچ کس", "0", 0,Term.Spring1402_1403);
+        }else
+            this.topStudent = sortedEntries.getFirst().getKey();
         return topStudent;
     }
 }

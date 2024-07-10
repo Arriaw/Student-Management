@@ -142,7 +142,7 @@ class _PinkPageState extends State<PinkPage> {
 
 
     await Socket.connect(host, 4050).then((serverSocket) {
-      String mess = "changeFields-${filed}-${widget.userProfile1.sid}-${newValue.text}\u0000";
+      String mess = "changeFields~${filed}~${widget.userProfile1.sid}~${newValue.text}\u0000";
       // serverSocket.write(
       //     "changeFields-${filed}-${widget.userProfile1.sid}-${newValue.text}\u0000");
       List<int> encoded = utf8.encode(mess);

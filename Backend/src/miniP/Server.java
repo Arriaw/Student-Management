@@ -248,8 +248,6 @@ class ClientHandler extends Thread{
                     System.out.println("200");
                     break;
 
-
-
                 case "getTasks":
                     sid = queryArr[1];
                     students = Admin.retrieveData(Student.class);
@@ -702,6 +700,8 @@ class ClientHandler2 extends Thread{
     DataOutputStream dos;
     DataInputStream dis;
     Socket socket;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
 
     ClientHandler2(Socket socket) throws IOException {
         this.socket = socket;
@@ -725,7 +725,7 @@ class ClientHandler2 extends Thread{
             query = query.substring(0, query.length()-1);
 
             System.out.println("Received query: " + query);
-            String[] queryArr = query.split("-");
+            String[] queryArr = query.split("~");
 
 //            int index = dis.read();
 //
@@ -792,9 +792,10 @@ class ClientHandler2 extends Thread{
 
 
                 case "SignUp":
-                    String name = queryArr[2];
-                    String studentId = queryArr[1];
+                    String name = queryArr[1];
+                    String studentId = queryArr[2];
                     String path = "unknown";
+                    System.out.println("id is "+ studentId);
 
                     Student studentNew = new Student(name, studentId, Admin.retrieveData(Student.class).size(), Term.بهار۱۴۰۲ـ۱۴۰۳,path);
                     if(Admin.addData(studentNew)) {
@@ -803,12 +804,37 @@ class ClientHandler2 extends Thread{
                         dos.flush();
                         dos.close();
                         System.out.println(stSID);
+                        System.out.println("the use info is : " + studentNew.getUsername() + " " + studentNew.getPassword());
                     }else{
                         dos.writeBytes("401");
                         dos.flush();
                         dos.close();
                     }
                     break;
+
+                case "addTask":
+                    System.out.println("I'm here");
+                    sid = queryArr[1];
+                    String taskTitle = queryArr[2];
+                    LocalDateTime dueDate = LocalDateTime.parse(queryArr[3], formatter);
+                    boolean isDone = Boolean.parseBoolean(queryArr[4]);
+                    Task newTask = new Task(taskTitle, dueDate, isDone);
+                    System.out.println(newTask.serialize());
+                    students = Admin.retrieveData(Student.class);
+
+                    for (Student s : students) {
+                        if (s.getSID().equals(sid)) {
+                            s.getTasks().add(newTask);
+                            Admin.updateData(s);
+                            break;
+                        }
+                    }
+
+                    dos.writeUTF("Task added successfully");
+                    dos.flush();
+                    break;
+
+
 
 
 

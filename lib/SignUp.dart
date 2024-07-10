@@ -45,7 +45,8 @@ class _SignUpstate extends State<SignUp>{
     final completer = Completer<String>();
     
     await Socket.connect(host, 4050).then((serverSocket) {
-      String mess = "SignUp-${name.text}-${ID.text}-${role}\u0000";
+      String mess = "SignUp~${name.text}~${ID.text}~${role} \u0000";
+      print("the messkia is : ${mess}");
       // serverSocket.write(
       //     "changeFields-${filed}-${widget.userProfile1.sid}-${newValue.text}\u0000");
       List<int> encoded = utf8.encode(mess);
