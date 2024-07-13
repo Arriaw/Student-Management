@@ -1,10 +1,7 @@
 import "dart:async";
-import "dart:convert";
 import "dart:io";
-
 import "package:arka_project/Homepage.dart";
 import "package:arka_project/SignUp.dart";
-import "package:arka_project/UserProfile.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:fluttertoast/fluttertoast.dart";
@@ -16,7 +13,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-
   void showToast(String message) {
     Fluttertoast.showToast(
         msg: message,
@@ -36,20 +32,11 @@ class _SignInState extends State<SignIn> {
   bool chekcerRun = false;
   String res = '';
   String response = '';
-  String host = '192.168.100.14';
+  String host = '192.168.100.15';
   int port = 8080;
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  void _printUsername() {
-    print('Username: ${_usernameController}');
-  }
-
-  void _printPassword() {
-    print('Username: ${_passwordController}');
-  }
-
 
   Future<void> _launchInWebView(Uri url) async{
     if(!await launchUrl(url , mode: LaunchMode.inAppWebView)){
@@ -58,18 +45,12 @@ class _SignInState extends State<SignIn> {
   }
 
 
-
-
-
-
-
   Future<String> login() async {
     final completer  = Completer<String>();
-
     print("i'm hewre");
     print(_usernameController.text + " " + _passwordController.text);
 
-    await Socket.connect('192.168.1.36',8080).then((serverSocket) {
+    await Socket.connect('192.168.100.15',8080).then((serverSocket) {
       serverSocket.write(
           "LoginChecker~${_usernameController.text}~${_passwordController
               .text}\u0000");
@@ -102,18 +83,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    
-    
-
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    String nameG = '';
-    String roleG = '';
     String sidG = '';
-    String currentTermG = '';
-    String vahedG = '';
-    String averageG = '';
-    String imagePathG = '';
 
     return MaterialApp(
       home: Scaffold(
@@ -127,12 +98,12 @@ class _SignInState extends State<SignIn> {
               child: ClipPath(
                 clipper: BottomWaveClipper(),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
                       colors: [
-                        Color(0xFFF97794), // Start color
+                        Color.fromRGBO(31, 48, 110, 1), // Start color
                         Color(0xFF623AA2), // End color
                       ],
                     ),
@@ -149,12 +120,12 @@ class _SignInState extends State<SignIn> {
               child: ClipPath(
                 clipper: TopWaveClipper(),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFFF97794), // Start color
+                        Color.fromRGBO(31, 48, 110, 1), // Start color
                         Color(0xFF623AA2), // End color
                       ],
                     ),
@@ -164,19 +135,21 @@ class _SignInState extends State<SignIn> {
             ),
             
             Positioned(
-              left: 94,
-              top: 144,
-              width: 203,
-              height: 83,
+              left: 37,
+              top: 130,
+              width: 340,
+              height: 119,
               child: Container(
                 alignment: Alignment.center,
-                child: Text(
-                  'سلام',
+                child: const Text(
+                  'به سامانه مدیریت دانشجویی خوش آمدید!',
                   style: TextStyle(
-                    fontSize: 64,
+                    fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Lato',
+                    fontFamily: 'Bnazanin',
                   ),
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
                 ),
               ),
             ),
@@ -188,7 +161,7 @@ class _SignInState extends State<SignIn> {
                   onPressed: () => setState(() {
                     _launchInWebView(Uri.parse("https://lms2.sbu.ac.ir"));
                   }),
-                  child: const Text("ورود به سامانه یادگیری مجازی", style: TextStyle(color: Colors.blueAccent , fontSize: 11), ),
+                  child: const Text("ورود به سامانه یادگیری مجازی", style: TextStyle(color: Colors.blueAccent , fontSize: 13), ),
                 )),
 
             Positioned(
@@ -196,21 +169,11 @@ class _SignInState extends State<SignIn> {
               left: (screenWidth *0.45) ,
 
               child: Image.asset(
-
-                // 'assets/images.jpeg',
                 'Backend/Images/sbu.png',
-
-                // imgpath,
-
-                //   'Backend/Images/202463603.jpg',
-                // "Backend/Images/202423104.jpg",
                 width: 40,
                 height: 40,
-                // fit: BoxFit.cover,
-
               ),
             ),
-
 
             Positioned(
               left: 74,
@@ -219,7 +182,7 @@ class _SignInState extends State<SignIn> {
               height: 30,
               child: Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'وارد حساب کاربری خود شوید',
                   style: TextStyle(
                     fontSize: 18,
@@ -238,16 +201,16 @@ class _SignInState extends State<SignIn> {
                 alignment: Alignment.center,
                 child: RichText(
                   text: TextSpan(
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontFamily: 'Lato',
                       color: Colors.black, // Default text color
                     ),
                     children: [
-                      TextSpan(text: 'حساب کاربری ندارید؟ '),
+                      const TextSpan(text: 'حساب کاربری ندارید؟ '),
                       TextSpan(
                         text: 'بسازید',
-                        style: TextStyle(
+                        style: const TextStyle(
                           decoration: TextDecoration.underline,
                         ),
                         recognizer: TapGestureRecognizer()
@@ -264,24 +227,6 @@ class _SignInState extends State<SignIn> {
               ),
             ),
 
-            // Positioned(
-            //   left: 150,
-            //   top: 488,
-            //   width: 200,
-            //   height: 24,
-            //   child: Container(
-            //     alignment: Alignment.center,
-            //     child: Text(
-            //       'رمز عبور خود را فراموش کرده ام',
-            //       style: TextStyle(
-            //         fontSize: 15,
-            //         fontFamily: 'Lato',
-            //         color: Color(0xFFBEBEBE),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
             Positioned(
               left: 201,
               top: 627,
@@ -289,7 +234,7 @@ class _SignInState extends State<SignIn> {
               height: 34,
               child: Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'ورود',
                   style: TextStyle(
                     fontSize: 25,
@@ -299,7 +244,6 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
             ),
-            ///USERNAME
 
             Positioned(
               left: 45,
@@ -308,21 +252,21 @@ class _SignInState extends State<SignIn> {
               height: 50,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     borderRadius: BorderRadius.circular(40),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
                         spreadRadius: 0,
                         blurRadius: 20,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ]),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: TextField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Username',
                       hintStyle: TextStyle(
@@ -336,8 +280,6 @@ class _SignInState extends State<SignIn> {
               ),
             ),
 
-
-
             Positioned(
               left: 45,
               top: 404,
@@ -345,17 +287,17 @@ class _SignInState extends State<SignIn> {
               height: 50,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                     borderRadius: BorderRadius.circular(40),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
                         spreadRadius: 0,
                         blurRadius: 20,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       )
                     ]),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: TextField(
                   controller: _passwordController,
@@ -363,17 +305,17 @@ class _SignInState extends State<SignIn> {
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Password',
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         color: Color(0xFFC8C8C8),
                       ),
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.lock,
                         color: Color(0xFF9A9A9A),
                       ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Color(0xFF9A9A9A),
+                        color: const Color(0xFF9A9A9A),
                       ),
                       onPressed: () {
                         // Toggle the state of obscurePassword
@@ -383,7 +325,6 @@ class _SignInState extends State<SignIn> {
                       },
                     ),
                   ),
-
                 ),
               ),
             ),
@@ -398,32 +339,12 @@ class _SignInState extends State<SignIn> {
                   if (_usernameController.text.isEmpty ||
                       _passwordController.text.isEmpty) {
                     showToast("پرکردن تمام فیلد ها الزامی است !");
-
-                  }else{
-                    print("hello");
+                  } else {
                     res = await login();
-
                     if (res == "200") {
                       print('this res is ' + res);
                       res = '0';
-
                       sidG = _usernameController.text;
-
-
-                      // Navigator.push(context,
-                      //   MaterialPageRoute(builder:
-                      //       (context) =>
-                      //       UserProfile(
-                      //         nameS: nameG,
-                      //         role: roleG,
-                      //         sid: sidG,
-                      //         currentTerm: currentTermG,
-                      //         vahed: vahedG,
-                      //         average: averageG,
-                      //         ImagePath: imagePathG,
-                      //       )
-                      //   ),
-                      // );
 
                       Navigator.push(context,
                         MaterialPageRoute(builder:
@@ -449,8 +370,8 @@ class _SignInState extends State<SignIn> {
                 ),
                  child: Ink(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFF97794), Color(0xFF623AA2)],
+                    gradient: const LinearGradient(
+                      colors: [Color.fromRGBO(31, 48, 110, 1), Color(0xFF623AA2)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -460,7 +381,7 @@ class _SignInState extends State<SignIn> {
                         color: Colors.black.withOpacity(0.1),
                         spreadRadius: 0,
                         blurRadius: 20,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -468,7 +389,7 @@ class _SignInState extends State<SignIn> {
                     alignment: Alignment.center,
                     height: 50,
                     width: 200,
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_forward,
                       color: Colors.white,
                     ),

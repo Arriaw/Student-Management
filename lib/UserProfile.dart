@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import 'SignIn.dart';
 import 'SignUp.dart';
 
@@ -47,7 +46,6 @@ class _UserProfileState extends State<UserProfile> {
 class PinkPage extends StatefulWidget {
   final UserProfile userProfile1;
 
-
   const PinkPage({required this.userProfile1});
 
   @override
@@ -55,24 +53,14 @@ class PinkPage extends StatefulWidget {
 }
 
 class _PinkPageState extends State<PinkPage> {
-
-
-
-
   String imgpath = "";
-  TextEditingController oldPassword  = new TextEditingController();
-  TextEditingController newPassword  = new TextEditingController();
-
-
-  TextEditingController newValue  = new TextEditingController();
-
-
+  TextEditingController oldPassword = new TextEditingController();
+  TextEditingController newPassword = new TextEditingController();
+  TextEditingController newValue = new TextEditingController();
 
   bool passwordchecking = false;
-
-  String host = "192.168.1.36";
+  String host = "192.168.100.15";
   int port = 8080;
-
   String Specailname = '';
   late Future<void> _userInfoFuture;
 
@@ -82,15 +70,11 @@ class _PinkPageState extends State<PinkPage> {
     _userInfoFuture = getUserInfo();
   }
 
+  String resRemoving = '';
 
-
-
-  String resRemoving =  '';
   Future<String> removeAccount() async {
     String response = '';
-
     final completer = Completer<String>();
-
     await Socket.connect(host, port).then((serverSocket) {
       serverSocket.write("removeAccount~${widget.userProfile1.sid}\u0000");
       serverSocket.flush();
@@ -104,7 +88,6 @@ class _PinkPageState extends State<PinkPage> {
 
     response = await completer.future;
 
-
     return response;
   }
 
@@ -112,11 +95,8 @@ class _PinkPageState extends State<PinkPage> {
     String response = '';
     final completer = Completer<String>();
 
-
-
     await Socket.connect(host, port).then((serverSocket) {
-      serverSocket.write(
-          "changePassword~${widget.userProfile1.sid}~${oldPassword.text}~${newPassword.text}\u0000");
+      serverSocket.write("changePassword~${widget.userProfile1.sid}~${oldPassword.text}~${newPassword.text}\u0000");
       serverSocket.flush();
       serverSocket.listen((socketResponse) {
         setState(() {
@@ -128,23 +108,16 @@ class _PinkPageState extends State<PinkPage> {
 
     response = await completer.future;
 
-
-
     return response;
-
   }
 
   Future<String> changeFields(String filed) async {
     String response = '';
     final completer = Completer<String>();
-
     print("this fiels is : ${filed} and the newvalue : ${newValue.text}");
-
 
     await Socket.connect(host, 4050).then((serverSocket) {
       String mess = "changeFields~${filed}~${widget.userProfile1.sid}~${newValue.text}\u0000";
-      // serverSocket.write(
-      //     "changeFields-${filed}-${widget.userProfile1.sid}-${newValue.text}\u0000");
       List<int> encoded = utf8.encode(mess);
       serverSocket.add(encoded);
       serverSocket.flush();
@@ -158,52 +131,35 @@ class _PinkPageState extends State<PinkPage> {
 
     response = await completer.future;
 
-
-
     return response;
-
   }
 
-    Future<void> getUserInfo() async {
+  Future<void> getUserInfo() async {
     String response = '';
-
     final completer = Completer<String>();
-
     print("Connecting to server...");
-
     try {
       final serverSocket = await Socket.connect(host, port);
       print("Connected to server");
 
       serverSocket.write("getUserInfo~${widget.userProfile1.sid}\u0000");
       await serverSocket.flush();
-
       serverSocket.listen((socketResponse) {
         print("Data received from server");
-        // response = String.fromCharCodes(socketResponse);
-        // response = String.fromCharCodes(socketResponse);
-
-        // response = Utf8Decoder().convert(socketResponse);
         response = utf8.decode(socketResponse.sublist(2));
-
         completer.complete(response);
-
-        serverSocket.destroy(); // Close the connection
+        serverSocket.destroy();
       }, onError: (error) {
         print("Error: $error");
         completer.completeError(error);
       }, onDone: () {
         print("Connection closed");
       });
-
     } catch (e) {
       print("Exception: $e");
       completer.completeError(e);
     }
-
     response = await completer.future;
-
-
 
     List<String> parameters = response.split("~");
 
@@ -225,51 +181,28 @@ class _PinkPageState extends State<PinkPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
     print("the Image paths is : ${widget.userProfile1.ImagePath}");
-
-    // String sid  = widget.userProfile1.sid;
-    // List<String> dir = widget.userProfile1.ImagePath.split("/");
-    // String typeFile = dir[dir.length -1].split(".")[1];
-    //
-    // String Imgpth = "Backend/Images/" + sid + "."  + typeFile;
-    // print("the imgpth is : ${Imgpth}");
-
-
-
-
-
-
-
-
 
     return Scaffold(
       body: FutureBuilder<void>(
         future: _userInfoFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             return Stack(
               children: [
                 Container(
-                  color: Color(0xFFFF8593), // Set the background color here
+                  color: const Color(0xFFFF8593), // Set the background color here
                 ),
                 Positioned(
                   top: screenHeight * 0.07,
                   left: (screenWidth - 130) / 2,
                   child: ClipOval(
                     child: Image.asset(
-
-                      // 'assets/images.jpeg',
-                    // 'Backend/Images/IconPerson.jpg',
-
                       imgpath,
-
-                    //   'Backend/Images/202463603.jpg',
-                      // "Backend/Images/202423104.jpg",
                       width: 140,
                       height: 140,
                       fit: BoxFit.cover,
@@ -282,7 +215,7 @@ class _PinkPageState extends State<PinkPage> {
                   child: Container(
                     width: 30,
                     height: 30,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.black,
                       shape: BoxShape.circle,
                     ),
@@ -308,7 +241,7 @@ class _PinkPageState extends State<PinkPage> {
                         // widget.userProfile1.nameS.substring(0, widget.userProfile1.nameS.length - 2),
                         widget.userProfile1.nameS,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -317,7 +250,7 @@ class _PinkPageState extends State<PinkPage> {
                       Text(
                         widget.userProfile1.role,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,
                         ),
@@ -332,7 +265,7 @@ class _PinkPageState extends State<PinkPage> {
                   child: Container(
                     width: screenWidth,
                     height: screenHeight * 0.65,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xFFF9F8FE),
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(50),
@@ -348,13 +281,12 @@ class _PinkPageState extends State<PinkPage> {
                   child: Container(
                     width: screenWidth * 0.85,
                     height: screenHeight * 0.31,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xFFFFFFFF),
                       borderRadius: BorderRadius.all(
                         Radius.circular(30),
                       ),
                     ),
-
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -379,7 +311,7 @@ class _PinkPageState extends State<PinkPage> {
                   child: Container(
                     width: screenWidth * 0.85,
                     height: screenHeight * 0.18,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xFFFFFFFF),
                       borderRadius: BorderRadius.all(
                         Radius.circular(30),
@@ -395,43 +327,38 @@ class _PinkPageState extends State<PinkPage> {
                             icon: Icons.edit,
                             iconColor: Colors.purple,
                             onPressed: () {
-
-
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
-                                  title: const Text('ویرایش مشخصات',
+                                  title: const Text(
+                                    'ویرایش مشخصات',
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
                                       fontFamily: 'Bnazanin',
-                                    ),),
+                                    ),
+                                  ),
                                   content: const Text(
                                     '',
                                   ),
                                   actions: <Widget>[
-
                                     CustomRow2(
                                       label: 'نام دانشجو',
                                       icon: Icons.edit,
                                       iconColor: Colors.purple,
                                       onPressed: () {
-
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-
-
                                                 content: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: <Widget>[
-
                                                     TextField(
                                                       obscureText: false,
                                                       textAlign: TextAlign.right,
                                                       controller: newValue,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                         labelText: 'مقدار جدید',
                                                       ),
                                                     ),
@@ -439,52 +366,34 @@ class _PinkPageState extends State<PinkPage> {
                                                 ),
                                                 actions: <Widget>[
                                                   TextButton(
-                                                    child: Text('تایید'),
-                                                    onPressed: ()  async {
-                                                      // String res = await changePassword();
-
+                                                    child: const Text('تایید'),
+                                                    onPressed: () async {
                                                       String res = '';
-
                                                       res = await changeFields("studentName");
-
                                                       String messageString = '';
                                                       Color colorT = Colors.black;
-
-                                                        messageString =
-                                                        "نام با موفقیت تغییر کرد";
-                                                        colorT = Colors.green;
-
-
+                                                      messageString = "نام با موفقیت تغییر کرد";
+                                                      colorT = Colors.green;
 
                                                       showDialog<String>(
                                                         context: context,
                                                         builder: (BuildContext context) => AlertDialog(
                                                           title: const Text(''),
-                                                          content:  Text(
+                                                          content: Text(
                                                             messageString,
                                                             style: TextStyle(
                                                               color: colorT,
                                                             ),
                                                           ),
-                                                          actions: <Widget>[
-
-                                                          ],
+                                                          actions: const <Widget>[],
                                                         ),
                                                       );
-
-                                                      // Wait for a delay
                                                       await Future.delayed(Duration(seconds: 2));
-
-                                                      // Close the dialog
                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
-
-                                                      // Navigator.of(context).pop();
-                                                      // Navigator.of(context).pop();
                                                     },
                                                   ),
-
                                                   TextButton(
-                                                    child: Text('لغو'),
+                                                    child: const Text('لغو'),
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                     },
@@ -494,29 +403,25 @@ class _PinkPageState extends State<PinkPage> {
                                             });
                                       },
                                     ),
-                                    Divider(),
+                                    const Divider(),
                                     CustomRow2(
                                       label: 'شماره دانشجویی',
                                       icon: Icons.edit,
                                       iconColor: Colors.purple,
                                       onPressed: () {
-
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-
-
                                                 content: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: <Widget>[
-
                                                     TextField(
                                                       obscureText: false,
                                                       textAlign: TextAlign.right,
                                                       controller: newValue,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                         labelText: 'مقدار جدید',
                                                       ),
                                                     ),
@@ -524,50 +429,31 @@ class _PinkPageState extends State<PinkPage> {
                                                 ),
                                                 actions: <Widget>[
                                                   TextButton(
-                                                    child: Text('تایید'),
-                                                    onPressed: ()  async {
-                                                      // String res = await changePassword();
-
+                                                    child: const Text('تایید'),
+                                                    onPressed: () async {
                                                       String res = '';
-
                                                       res = await changeFields("SID");
-
                                                       String messageString = '';
                                                       Color colorT = Colors.black;
-
-                                                        messageString =
-                                                        "نام با موفقیت تغییر کرد";
-                                                        colorT = Colors.green;
-
-
-
+                                                      messageString = "نام با موفقیت تغییر کرد";
+                                                      colorT = Colors.green;
                                                       showDialog<String>(
                                                         context: context,
                                                         builder: (BuildContext context) => AlertDialog(
                                                           title: const Text(''),
-                                                          content:  Text(
+                                                          content: Text(
                                                             messageString,
                                                             style: TextStyle(
                                                               color: colorT,
                                                             ),
                                                           ),
-                                                          actions: <Widget>[
-
-                                                          ],
+                                                          actions: <Widget>[],
                                                         ),
                                                       );
-
-                                                      // Wait for a delay
-                                                      await Future.delayed(Duration(seconds: 2));
-
-                                                      // Close the dialog
+                                                      await Future.delayed(const Duration(seconds: 2));
                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
-
-                                                      // Navigator.of(context).pop();
-                                                      // Navigator.of(context).pop();
                                                     },
                                                   ),
-
                                                   TextButton(
                                                     child: Text('لغو'),
                                                     onPressed: () {
@@ -579,41 +465,34 @@ class _PinkPageState extends State<PinkPage> {
                                             });
                                       },
                                     ),
-                                    Divider(),
-
+                                    const Divider(),
                                     CustomRow2(
                                       label: 'ترم جاری',
                                       icon: Icons.edit,
                                       iconColor: Colors.purple,
                                       onPressed: () {
-
                                         _showAlertDialog(context);
-                                        },
+                                      },
                                     ),
-                                    Divider(),
-
+                                    const Divider(),
                                     CustomRow2(
                                       label: 'تعداد واحد',
                                       icon: Icons.edit,
                                       iconColor: Colors.purple,
                                       onPressed: () {
-
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-
-
                                                 content: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: <Widget>[
-
                                                     TextField(
                                                       obscureText: false,
                                                       textAlign: TextAlign.right,
                                                       controller: newValue,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                         labelText: 'مقدار جدید',
                                                       ),
                                                     ),
@@ -621,51 +500,33 @@ class _PinkPageState extends State<PinkPage> {
                                                 ),
                                                 actions: <Widget>[
                                                   TextButton(
-                                                    child: Text('تایید'),
-                                                    onPressed: ()  async {
-                                                      // String res = await changePassword();
-
+                                                    child: const Text('تایید'),
+                                                    onPressed: () async {
                                                       String res = '';
-
                                                       res = await changeFields("numberOfUnits");
-
                                                       String messageString = '';
                                                       Color colorT = Colors.black;
-
-                                                        messageString =
-                                                        "نام با موفقیت تغییر کرد";
-                                                        colorT = Colors.green;
-
-
+                                                      messageString = "نام با موفقیت تغییر کرد";
+                                                      colorT = Colors.green;
                                                       showDialog<String>(
                                                         context: context,
                                                         builder: (BuildContext context) => AlertDialog(
                                                           title: const Text(''),
-                                                          content:  Text(
+                                                          content: Text(
                                                             messageString,
                                                             style: TextStyle(
                                                               color: colorT,
                                                             ),
                                                           ),
-                                                          actions: <Widget>[
-
-                                                          ],
+                                                          actions: <Widget>[],
                                                         ),
                                                       );
-
-                                                      // Wait for a delay
-                                                      await Future.delayed(Duration(seconds: 2));
-
-                                                      // Close the dialog
+                                                      await Future.delayed(const Duration(seconds: 2));
                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
-
-                                                      // Navigator.of(context).pop();
-                                                      // Navigator.of(context).pop();
                                                     },
                                                   ),
-
                                                   TextButton(
-                                                    child: Text('لغو'),
+                                                    child: const Text('لغو'),
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                     },
@@ -673,33 +534,27 @@ class _PinkPageState extends State<PinkPage> {
                                                 ],
                                               );
                                             });
-
                                       },
                                     ),
-                                    Divider(),
-
+                                    const Divider(),
                                     CustomRow2(
                                       label: 'معدل کل',
                                       icon: Icons.edit,
                                       iconColor: Colors.purple,
                                       onPressed: () {
-
                                         showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-
-
                                                 content: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: <Widget>[
-
                                                     TextField(
                                                       obscureText: false,
                                                       textAlign: TextAlign.right,
                                                       controller: newValue,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                         labelText: 'مقدار جدید',
                                                       ),
                                                     ),
@@ -708,55 +563,37 @@ class _PinkPageState extends State<PinkPage> {
                                                 actions: <Widget>[
                                                   TextButton(
                                                     child: Text('تایید'),
-                                                    onPressed: ()  async {
-                                                      // String res = await changePassword();
-
+                                                    onPressed: () async {
                                                       String res = '';
-
                                                       res = await changeFields("averageScore");
-
                                                       String messageString = '';
                                                       Color colorT = Colors.black;
-                                                      if(res == 200) {
-                                                        messageString =
-                                                        "نام با موفقیت تغییر کرد";
+                                                      if (res == 200) {
+                                                        messageString = "نام با موفقیت تغییر کرد";
                                                         colorT = Colors.green;
-                                                      }else {
-                                                        messageString =
-                                                        "!مشکلی پیش آمده است";
+                                                      } else {
+                                                        messageString = "!مشکلی پیش آمده است";
                                                         colorT = Colors.redAccent;
                                                       }
-
-
                                                       showDialog<String>(
                                                         context: context,
                                                         builder: (BuildContext context) => AlertDialog(
                                                           title: const Text(''),
-                                                          content:  Text(
+                                                          content: Text(
                                                             messageString,
                                                             style: TextStyle(
                                                               color: colorT,
                                                             ),
                                                           ),
-                                                          actions: <Widget>[
-
-                                                          ],
+                                                          actions: const <Widget>[],
                                                         ),
                                                       );
-
-                                                      // Wait for a delay
-                                                      await Future.delayed(Duration(seconds: 2));
-
-                                                      // Close the dialog
+                                                      await Future.delayed(const Duration(seconds: 2));
                                                       Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
-
-                                                      // Navigator.of(context).pop();
-                                                      // Navigator.of(context).pop();
                                                     },
                                                   ),
-
                                                   TextButton(
-                                                    child: Text('لغو'),
+                                                    child: const Text('لغو'),
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                     },
@@ -766,9 +603,7 @@ class _PinkPageState extends State<PinkPage> {
                                             });
                                       },
                                     ),
-
                                   ],
-
                                 ),
                               ).then((returnVal) {
                                 if (returnVal != null) {
@@ -780,125 +615,108 @@ class _PinkPageState extends State<PinkPage> {
                                   );
                                 }
                               });
-
                               print('edit button pressed ');
                             },
                           ),
-                          Divider(),
+                          const Divider(),
                           CustomRow2(
-                            label: 'تغییر رمز عبور',
-                            icon: Icons.lock,
-                            iconColor: Colors.pink,
-                            onPressed: ()  {
-                              // print("the user info is : " + userInfo);
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-
-                                    title: Text(
-                                      'تغییر رمز عبور',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontFamily: 'Bnazanin',
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        TextField(
-                                          obscureText: true,
+                              label: 'تغییر رمز عبور',
+                              icon: Icons.lock,
+                              iconColor: Colors.pink,
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                          'تغییر رمز عبور',
                                           textAlign: TextAlign.right,
-                                          controller: oldPassword,
-                                          decoration: InputDecoration(
-                                            labelText: 'رمز قبلی',
-                                            alignLabelWithHint: true,
+                                          style: TextStyle(
+                                            fontFamily: 'Bnazanin',
+                                            fontSize: 20,
                                           ),
                                         ),
-                                        TextField(
-                                          obscureText: true,
-                                          textAlign: TextAlign.right,
-                                          controller: newPassword,
-                                          decoration: InputDecoration(
-                                            labelText: 'رمز جدید',
-                                            alignLabelWithHint: true,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: Text('تایید'),
-                                        onPressed: () async {
-                                          String res = await changePassword();
-                                           String messageString = '';
-                                           Color colorT = Colors.black;
-                                          if(res == "200"){
-                                            messageString = "رمز با موفقیت تغییر کرد";
-                                            colorT = Colors.green;
-                                          }
-                                          if(res == "402"){
-                                            messageString= "!پسورد وارد شده ضعیف است";
-                                            colorT = Colors.red;
-                                          }
-                                          if(res == "401"){
-                                            messageString = "! رمز نادرست می باشد";
-                                            colorT = Colors.red;
-                                          }
-
-
-
-                                          showDialog<String>(
-                                            context: context,
-                                            builder: (BuildContext context) => AlertDialog(
-                                              title: const Text(''),
-                                              content:  Text(
-                                                messageString,
-                                                style: TextStyle(
-                                                  color: colorT,
-                                                ),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: <Widget>[
+                                            TextField(
+                                              obscureText: true,
+                                              textAlign: TextAlign.right,
+                                              controller: oldPassword,
+                                              decoration: const InputDecoration(
+                                                labelText: 'رمز قبلی',
+                                                alignLabelWithHint: true,
                                               ),
-                                              actions: <Widget>[
-
-
-                                              ],
                                             ),
-                                          ).then((returnVal) {
-                                            if (returnVal != null) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text('You clicked: $returnVal'),
-                                                  action: SnackBarAction(label: 'OK', onPressed: () {}),
+                                            TextField(
+                                              obscureText: true,
+                                              textAlign: TextAlign.right,
+                                              controller: newPassword,
+                                              decoration: const InputDecoration(
+                                                labelText: 'رمز جدید',
+                                                alignLabelWithHint: true,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('تایید'),
+                                            onPressed: () async {
+                                              String res = await changePassword();
+                                              String messageString = '';
+                                              Color colorT = Colors.black;
+                                              if (res == "200") {
+                                                messageString = "رمز با موفقیت تغییر کرد";
+                                                colorT = Colors.green;
+                                              }
+                                              if (res == "402") {
+                                                messageString = "!پسورد وارد شده ضعیف است";
+                                                colorT = Colors.red;
+                                              }
+                                              if (res == "401") {
+                                                messageString = "! رمز نادرست می باشد";
+                                                colorT = Colors.red;
+                                              }
+
+                                              showDialog<String>(
+                                                context: context,
+                                                builder: (BuildContext context) => AlertDialog(
+                                                  title: const Text(''),
+                                                  content: Text(
+                                                    messageString,
+                                                    style: TextStyle(
+                                                      color: colorT,
+                                                    ),
+                                                  ),
+                                                  actions: const <Widget>[],
                                                 ),
-                                              );
-                                            }
-                                          });
-
-                                          // Wait for a delay
-                                          await Future.delayed(Duration(seconds: 2));
-
-                                          // Close the dialog
-                                          Navigator.of(context).pop();
-                                          if(res == "200")
-                                            Navigator.of(context).pop();
-                                        },
-                                      ),
-
-                                      TextButton(
-                                        child: Text('لغو'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                              });
-                            }
-
-
-                          ),
+                                              ).then((returnVal) {
+                                                if (returnVal != null) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text('You clicked: $returnVal'),
+                                                      action: SnackBarAction(label: 'OK', onPressed: () {}),
+                                                    ),
+                                                  );
+                                                }
+                                              });
+                                              await Future.delayed(const Duration(seconds: 2));
+                                              Navigator.of(context).pop();
+                                              if (res == "200") Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('لغو'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              }),
                         ],
                       ),
                     ),
@@ -910,16 +728,14 @@ class _PinkPageState extends State<PinkPage> {
                   left: screenWidth * 0.066,
                   child: ElevatedButton(
                     onPressed: () async {
-
                       showDialog<String>(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
-                          title: const Text('حذف حساب کاربری',
+                          title: const Text(
+                            'حذف حساب کاربری',
                             textAlign: TextAlign.right,
-                            style: TextStyle(
-                                fontFamily: 'Bnazanin',
-                                color: Colors.redAccent
-                            ),),
+                            style: TextStyle(fontFamily: 'Bnazanin', color: Colors.redAccent),
+                          ),
                           content: const Text(
                             'آیا از حذف حساب کابری خود اطمینان دارید ؟‌',
                             style: TextStyle(
@@ -931,58 +747,39 @@ class _PinkPageState extends State<PinkPage> {
                               onPressed: () async {
                                 String res = await removeAccount();
                                 print("the res in remove account is : ${res}");
-
-                                if(res == "200"){
+                                if (res == "200") {
                                   print("اکانت با موفقیت حذف شد");
-                                  // Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
                                   showDialog<String>(
                                     context: context,
-                                    builder: (BuildContext context) => AlertDialog(
-                                      title: const Text(''),
-                                      content:  Text(
+                                    builder: (BuildContext context) => const AlertDialog(
+                                      title: Text(''),
+                                      content: Text(
                                         "اکانت با موفقیت حذف شد",
                                         style: TextStyle(
                                           color: Colors.greenAccent,
                                         ),
                                       ),
-                                      actions: <Widget>[
-
-
-                                      ],
+                                      actions: <Widget>[],
                                     ),
-                                  ).then((returnVal) {
-
-                                  });
-
-                                  // Wait for a delay
+                                  ).then((returnVal) {});
                                   await Future.delayed(Duration(seconds: 2));
-
-                                  // Close the dialog
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
-
-
-                                } else if (res == '401'){
+                                } else if (res == '401') {
                                   showDialog<String>(
                                     context: context,
-                                    builder: (BuildContext context) => AlertDialog(
-                                      title: const Text(''),
-                                      content:  Text(
+                                    builder: (BuildContext context) => const AlertDialog(
+                                      title: Text(''),
+                                      content: Text(
                                         "مشکلی پیش آمده! \n اکانت با موفقیت حذف نشد",
                                         style: TextStyle(
                                           color: Colors.redAccent,
                                         ),
                                       ),
-                                      actions: <Widget>[
-
-
-                                      ],
+                                      actions: <Widget>[],
                                     ),
-                                  ).then((returnVal) {
-
-                                  });
+                                  ).then((returnVal) {});
                                 }
-
-                            },
+                              },
                               child: const Text('تایید'),
                             ),
                             TextButton(
@@ -991,19 +788,17 @@ class _PinkPageState extends State<PinkPage> {
                             ),
                           ],
                         ),
-                      ).then((returnVal) {
-
-                      });
+                      ).then((returnVal) {});
                       print("the delete button pressed");
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      backgroundColor: Color(0xFFFF4545),
-                      padding: EdgeInsets.all(8.0),
+                      backgroundColor: const Color(0xFFFF4545),
+                      padding: const EdgeInsets.all(8.0),
                     ),
-                    child: Text(
+                    child: const Text(
                       "حذف حساب کاربری",
                       style: TextStyle(
                         fontSize: 18,
@@ -1023,163 +818,138 @@ class _PinkPageState extends State<PinkPage> {
   }
 }
 
-
-
-void showAlertDialog2(BuildContext context){
+void showAlertDialog2(BuildContext context) {
   showDialog<String>(
     context: context,
     builder: (BuildContext context) => AlertDialog(
-      title: const Text('ویرایش مشخصات',
-      textAlign: TextAlign.right,
-      style: TextStyle(
-        fontFamily: 'Bnazanin',
-      ),),
+      title: const Text(
+        'ویرایش مشخصات',
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          fontFamily: 'Bnazanin',
+        ),
+      ),
       content: const Text(
         '',
       ),
       actions: <Widget>[
-
-          CustomRow2(
-            label: 'نام دانشجو',
-            icon: Icons.edit,
-            iconColor: Colors.purple,
-            onPressed: () {
-
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-
-
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-
-                          TextField(
-                            obscureText: true,
-                            textAlign: TextAlign.right,
-                            // controller: newPassword,
-                            decoration: InputDecoration(
-                              labelText: 'مقدار جدید',
-                              alignLabelWithHint: true,
-                            ),
+        CustomRow2(
+          label: 'نام دانشجو',
+          icon: Icons.edit,
+          iconColor: Colors.purple,
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        TextField(
+                          obscureText: true,
+                          textAlign: TextAlign.right,
+                          // controller: newPassword,
+                          decoration: InputDecoration(
+                            labelText: 'مقدار جدید',
+                            alignLabelWithHint: true,
                           ),
-                        ],
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('تایید'),
-                          onPressed: () async {
-                            // String res = await changePassword();
-                            String res = '';
-                            String messageString = '';
-                            Color colorT = Colors.black;
-                            if(res == "200"){
-                              messageString = "رمز با موفقیت تغییر کرد";
-                              colorT = Colors.green;
-                            }
-                            if(res == "402"){
-                              messageString= "! مشکلی پیش آمده است";
-                              colorT = Colors.red;
-                            }
-
-
-
-
-                            showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text(''),
-                                content:  Text(
-                                  messageString,
-                                  style: TextStyle(
-                                    color: colorT,
-                                  ),
-                                ),
-                                actions: <Widget>[
-
-
-                                ],
-                              ),
-                            ).then((returnVal) {
-                              if (returnVal != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('You clicked: $returnVal'),
-                                    action: SnackBarAction(label: 'OK', onPressed: () {}),
-                                  ),
-                                );
-                              }
-                            });
-
-                            // Wait for a delay
-                            await Future.delayed(Duration(seconds: 2));
-
-                            // Close the dialog
-                            Navigator.of(context).pop();
-                            if(res == "200")
-                              Navigator.of(context).pop();
-                          },
-                        ),
-
-                        TextButton(
-                          child: Text('لغو'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
                         ),
                       ],
-                    );
-                  });
-            },
-          ),
-          Divider(),
-          CustomRow2(
-            label: 'شماره دانشجویی',
-            icon: Icons.edit,
-            iconColor: Colors.purple,
-            onPressed: () {
-
-              print('edit button pressed ');
-            },
-          ),
-        Divider(),
-
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('تایید'),
+                        onPressed: () async {
+                          // String res = await changePassword();
+                          String res = '';
+                          String messageString = '';
+                          Color colorT = Colors.black;
+                          if (res == "200") {
+                            messageString = "رمز با موفقیت تغییر کرد";
+                            colorT = Colors.green;
+                          }
+                          if (res == "402") {
+                            messageString = "! مشکلی پیش آمده است";
+                            colorT = Colors.red;
+                          }
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text(''),
+                              content: Text(
+                                messageString,
+                                style: TextStyle(
+                                  color: colorT,
+                                ),
+                              ),
+                              actions: const <Widget>[],
+                            ),
+                          ).then((returnVal) {
+                            if (returnVal != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('You clicked: $returnVal'),
+                                  action: SnackBarAction(label: 'OK', onPressed: () {}),
+                                ),
+                              );
+                            }
+                          });
+                          await Future.delayed(const Duration(seconds: 2));
+                          Navigator.of(context).pop();
+                          if (res == "200") {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('لغو'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                });
+          },
+        ),
+        const Divider(),
+        CustomRow2(
+          label: 'شماره دانشجویی',
+          icon: Icons.edit,
+          iconColor: Colors.purple,
+          onPressed: () {
+            print('edit button pressed ');
+          },
+        ),
+        const Divider(),
         CustomRow2(
           label: 'ترم جاری',
           icon: Icons.edit,
           iconColor: Colors.purple,
           onPressed: () {
-
             print('edit button pressed ');
           },
         ),
-        Divider(),
-
+        const Divider(),
         CustomRow2(
           label: 'تعداد واحد',
           icon: Icons.edit,
           iconColor: Colors.purple,
           onPressed: () {
-
             print('edit button pressed ');
           },
         ),
-        Divider(),
-
+        const Divider(),
         CustomRow2(
           label: 'معدل کل',
           icon: Icons.edit,
           iconColor: Colors.purple,
           onPressed: () {
-
             print('edit button pressed ');
           },
         ),
-
-        ],
-
+      ],
     ),
   ).then((returnVal) {
     if (returnVal != null) {
@@ -1198,16 +968,9 @@ void _showAlertDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: const Text('ویرایش مشخصات کاربری',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Bnazanin',
-                fontSize: 26,
-                color: Colors.redAccent)),
-        content: const Text(
-            'جهت ویرایش اطلاعات کاربری خود به واحد راهبری دانشگاه مراجعه نمایید.',
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: const Text('ویرایش مشخصات کاربری', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Bnazanin', fontSize: 26, color: Colors.redAccent)),
+        content: const Text('جهت ویرایش اطلاعات کاربری خود به واحد راهبری دانشگاه مراجعه نمایید.',
             textDirection: TextDirection.rtl,
             style: TextStyle(
               fontFamily: 'Bnazanin',
@@ -1228,22 +991,19 @@ void _showAlertDialog(BuildContext context) {
   );
 }
 
-
-
 void showChangePasswordDialog(BuildContext context, TextEditingController oldPassword, TextEditingController newPassword) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-
-        title: Text('تغییر رمز عبور',
-        textAlign: TextAlign.right,
-        style: TextStyle(
-          fontFamily: 'Bnazanin',
-          fontSize: 20,
-
-        ),),
-
+        title: const Text(
+          'تغییر رمز عبور',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            fontFamily: 'Bnazanin',
+            fontSize: 20,
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -1252,7 +1012,7 @@ void showChangePasswordDialog(BuildContext context, TextEditingController oldPas
               obscureText: true,
               textAlign: TextAlign.right,
               controller: oldPassword,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'رمز قبلی',
                 alignLabelWithHint: true,
               ),
@@ -1261,7 +1021,7 @@ void showChangePasswordDialog(BuildContext context, TextEditingController oldPas
               obscureText: true,
               textAlign: TextAlign.right,
               controller: newPassword,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'رمز جدید',
                 alignLabelWithHint: true,
               ),
@@ -1270,13 +1030,13 @@ void showChangePasswordDialog(BuildContext context, TextEditingController oldPas
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('تایید'),
+            child: const Text('تایید'),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('لغو'),
+            child: const Text('لغو'),
             onPressed: () {
               // Handle submission logic here
               Navigator.of(context).pop();
@@ -1306,15 +1066,13 @@ class CustomRow2 extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          child: Text(
-            label,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+        Text(
+          label,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
         ElevatedButton(
@@ -1349,14 +1107,14 @@ class CustomRow extends StatelessWidget {
         children: [
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.grey,
             ),
           ),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black,

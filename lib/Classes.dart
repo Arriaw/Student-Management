@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:arka_project/dartFiles/Course.dart';
 import 'package:flutter/material.dart';
 import 'News.dart';
@@ -19,23 +18,18 @@ class ClassesPage extends StatefulWidget {
 class _ClassesPageState extends State<ClassesPage> {
   int _pageIndex = 2;
   List<Course> courses = [];
-  String host = "192.168.1.36";
+  String host = "192.168.100.15";
   int port = 8080;
   late Future<void> _future;
   String res = '';
-
   String sidR = '';
-
   late List<Widget> _widgetOptions;
-
-
 
   @override
   void initState() {
     super.initState();
     _future = getClasses();
     sidR = widget.sid;
-
     _widgetOptions = <Widget>[
       AssignmentsPage(sid: sidR,),
       NewsPage(sid: sidR,),
@@ -51,7 +45,7 @@ class _ClassesPageState extends State<ClassesPage> {
     print("Connecting to server as getClasses...");
     try {
       final socket = await Socket.connect(host, port);
-      socket.write("getClasses~${202433000}\u0000");
+      socket.write("getClasses~${widget.sid}\u0000");
       await socket.flush();
       print("Connected to server as getClasses");
 
@@ -94,7 +88,7 @@ class _ClassesPageState extends State<ClassesPage> {
 
     try {
       final socket = await Socket.connect(host, port);
-      socket.write('addClass~${202433000}~$id\u0000');
+      socket.write('addClass~${widget.sid}~$id\u0000');
       await socket.flush();
       socket.listen((data) {
         response = String.fromCharCodes(data);
@@ -117,7 +111,6 @@ class _ClassesPageState extends State<ClassesPage> {
   Future<void> _course200(String id) async {
     String response = '';
     final completer = Completer<String>();
-
     try {
       final socket = await Socket.connect(host, port);
       print("connected to server as course200");
@@ -192,7 +185,6 @@ class _ClassesPageState extends State<ClassesPage> {
 
   void _showAddClassBottomSheet() {
     TextEditingController classIdController = TextEditingController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {

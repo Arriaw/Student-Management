@@ -1,17 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'News.dart';
 import 'Classes.dart';
 import 'TodoPage.dart';
 import 'Assignments.dart';
 import 'UserProfile.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
 
 class MyApp extends StatelessWidget {
   String sidM;
@@ -41,15 +36,11 @@ class Homepage extends StatefulWidget {
 class _Homepage extends State<Homepage> {
   String sidR = '';
   int _pageIndex = 4;
-
   late List<Widget> _widgetOptions;
-
   @override
   void initState() {
     super.initState();
     sidR = widget.sid;
-
-
     _widgetOptions = <Widget>[
       AssignmentsPage(sid: sidR,),
       NewsPage(sid: sidR,),
@@ -71,14 +62,14 @@ class _Homepage extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
+        title: const Text(''),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              icon: Icon(Icons.person, color: Colors.blue),
+              icon: const Icon(Icons.person, color: Colors.blue),
               onPressed: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder:
@@ -94,7 +85,6 @@ class _Homepage extends State<Homepage> {
                       )
                   ),
                 );
-
               },
             ),
           ),
@@ -107,9 +97,9 @@ class _Homepage extends State<Homepage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SummarySection(sid: sidR,),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               CurrentTasksSection(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               CompletedTasksSection(),
             ],
           ),
@@ -156,9 +146,9 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('پروفایل'),
+        title: const Text('پروفایل'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('This is the profile page'),
       ),
     );
@@ -175,21 +165,15 @@ class SummarySection extends StatefulWidget{
 class _SummarySectionstate extends State<SummarySection> {
   String response = '';
   int port = 8080;
-  String host = '192.168.1.36';
-
-
+  String host = '192.168.100.15';
   String CountAllAssignments = '0';
   String BestScore = '';
   String WorthScore= '';
   List<Task> tasks = [];
   late Future<void> _future;
 
-
   Future<String> getCountAssignments() async {
     final completer  = Completer<String>();
-
-    print("i'm hewre");
-
     await Socket.connect(host,port).then((serverSocket) {
       serverSocket.write("getAssignmentsCount~${widget.sid}\u0000");
       serverSocket.flush();
@@ -202,9 +186,7 @@ class _SummarySectionstate extends State<SummarySection> {
     });
 
     response = await completer.future;
-
     CountAllAssignments = response;
-
     print("the count is : ${CountAllAssignments}");
 
     return response;
@@ -212,9 +194,6 @@ class _SummarySectionstate extends State<SummarySection> {
 
   Future<String> getBestScore() async {
     final completer  = Completer<String>();
-
-    print("i'm hewre");
-
     await Socket.connect(host,port).then((serverSocket) {
       serverSocket.write("getBestScore~${widget.sid}\u0000");
       serverSocket.flush();
@@ -227,9 +206,7 @@ class _SummarySectionstate extends State<SummarySection> {
     });
 
     response = await completer.future;
-
     BestScore = response;
-
     print("the BestScore is : ${BestScore}");
 
     return response;
@@ -237,9 +214,6 @@ class _SummarySectionstate extends State<SummarySection> {
 
   Future<String> getWorthScore() async {
     final completer  = Completer<String>();
-
-    print("i'm hewre");
-
     await Socket.connect(host,port).then((serverSocket) {
       serverSocket.write("getWorthScore~${widget.sid}\u0000");
       serverSocket.flush();
@@ -252,9 +226,7 @@ class _SummarySectionstate extends State<SummarySection> {
     });
 
     response = await completer.future;
-
     WorthScore = response;
-
     print("the BestScore is : ${WorthScore}");
 
     return response;
@@ -311,7 +283,6 @@ class _SummarySectionstate extends State<SummarySection> {
     getBestScore();
     getWorthScore();
     _future = getTasks();
-
   }
 
   @override
@@ -319,7 +290,7 @@ class _SummarySectionstate extends State<SummarySection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end, // Align text to the right
       children: [
-        Align(
+        const Align(
           alignment: Alignment.centerRight,
           child: Text(
             'خلاصه',
@@ -327,7 +298,7 @@ class _SummarySectionstate extends State<SummarySection> {
             textAlign: TextAlign.right, // Align text to the right
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Container(
           alignment: Alignment.centerRight,
           child: Wrap(
@@ -351,12 +322,10 @@ class _SummarySectionstate extends State<SummarySection> {
 class SummaryCard extends StatelessWidget {
   final String title;
   final IconData icon;
-
   SummaryCard(this.title, this.icon);
-
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 150, // Set a fixed width for the cards
       child: Card(
         child: Padding(
@@ -364,7 +333,7 @@ class SummaryCard extends StatelessWidget {
           child: Column(
             children: [
               Icon(icon, size: 30, color: Colors.blue),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(title, textAlign: TextAlign.center),
             ],
           ),
@@ -375,40 +344,33 @@ class SummaryCard extends StatelessWidget {
 }
 
 class CurrentTasksSection extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end, // Move text to the right
       children: [
-        Text(
+        const Text(
           'کارهای جاری',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           textAlign: TextAlign.right, // Align text to the right
         ),
         SizedBox(height: 10),
-
-
-
         TaskItem('آز ریز - تمرین 1'),
         TaskItem('تست - تمرین 1'),
       ],
     );
   }
-
 }
 
 class TaskItem extends StatelessWidget {
   final String title;
-
   TaskItem(this.title);
-
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Icon(Icons.close, color: Colors.red),
-        trailing: Icon(Icons.check_circle, color: Colors.green),
+        leading: const Icon(Icons.close, color: Colors.red),
+        trailing: const Icon(Icons.check_circle, color: Colors.green),
         title: Text(title, textAlign: TextAlign.right),
       ),
     );
@@ -421,12 +383,12 @@ class CompletedTasksSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end, // Move text to the right
       children: [
-        Text(
+        const Text(
           'تمرین‌های انجام شده',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           textAlign: TextAlign.right, // Align text to the right
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         TaskItem('تمرین 1 معماری'),
         TaskItem('AP - تمرین 2'),
       ],

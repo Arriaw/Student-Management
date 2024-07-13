@@ -255,6 +255,10 @@ public class Student implements Serializable{
     void addAssignment(Assignment assignment) {
         assignments.add(assignment);
     }
+
+    void removeAssignment(Assignment assignment) {
+        assignments.remove(assignment);
+    }
     public List<Assignment> getNotFinishedAssignments() {
         return notFinishedAssignments;
     }

@@ -151,7 +151,7 @@ public class Cli {
                         System.out.println("You are not the teacher of this course.");
                         break;
                     }
-                    System.out.println("Enter the deadline of this assignment(yyyy-MM-dd HH:mm:ss.SSS): ");
+                    System.out.println("Enter the deadline of this assignment(yyyy-MM-ddTHH:mm:ss.SSS): ");
                     String deadline = scanner.nextLine();
                     System.out.println("Enter the title of this assignment: ");
                     String title = scanner.nextLine();
@@ -221,6 +221,9 @@ public class Cli {
                     course.removeAssignment(assignment);
                     Admin.removeData(assignment);
                     Admin.updateData(course);
+                    for (Student s : course.getStudents()) {
+                        Admin.updateData(s);
+                    }
                     System.out.println("Assignment removed from the course successfully");
                     break;
                 case 3:
@@ -615,6 +618,10 @@ public class Cli {
                         System.out.println(s.getStudentName() + "-" + s.getSID() +  "-" + s.getUsername() + "-" + s.getPassword() + "-" + s.getTasks().size() + "-" + s.getCourses().size() + "-" + s.getAssignments().size());
                         for (Task t : s.getTasks())
                             System.out.println(t.serialize());
+                        for (Course c : s.getCourses())
+                            System.out.println(c.serialize());
+                        for (Assignment a : s.getAssignments())
+                            System.out.println(a.serializeAll());
                     }
 
                     break;

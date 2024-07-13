@@ -1,54 +1,41 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'SignIn.dart';
-
 import 'package:fluttertoast/fluttertoast.dart';
 
-class SignUp extends StatefulWidget{
+class SignUp extends StatefulWidget {
   @override
   _SignUpstate createState() => _SignUpstate();
 }
 
-class _SignUpstate extends State<SignUp>{
-
-  // String response= '';
-
-  String host = "192.168.1.36";
+class _SignUpstate extends State<SignUp> {
+  String host = "192.168.100.15";
   int port = 4050;
-
-
 
   TextEditingController name = new TextEditingController();
   TextEditingController ID = new TextEditingController();
   String? role;
 
   String response = '';
-  String sidr=  "";
+  String sidr = "";
   bool flag = false;
   bool CheckRun = false;
-  
-  
-  Future<void> _launchInWebView(Uri url) async{
-    if(!await launchUrl(url , mode: LaunchMode.inAppWebView)){
+
+  Future<void> _launchInWebView(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
       throw Exception('Could not launch $url');
     }
   }
 
-
-
   Future<String> signupm() async {
     final completer = Completer<String>();
-    
+
     await Socket.connect(host, 4050).then((serverSocket) {
       String mess = "SignUp~${name.text}~${ID.text}~${role} \u0000";
-      print("the messkia is : ${mess}");
-      // serverSocket.write(
-      //     "changeFields-${filed}-${widget.userProfile1.sid}-${newValue.text}\u0000");
       List<int> encoded = utf8.encode(mess);
       serverSocket.add(encoded);
       serverSocket.flush();
@@ -63,12 +50,11 @@ class _SignUpstate extends State<SignUp>{
     response = await completer.future;
     print('the response is : ${response}');
     sidr = response;
-
     CheckRun = true;
 
     return response;
-
   }
+
   void showToast(String message) {
     Fluttertoast.showToast(
         msg: message,
@@ -77,13 +63,11 @@ class _SignUpstate extends State<SignUp>{
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
 
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -91,70 +75,65 @@ class _SignUpstate extends State<SignUp>{
       home: Scaffold(
         body: Stack(
           children: <Widget>[
-
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              height: 200, // Adjust height as needed
+              height: 200,
               child: ClipPath(
                 clipper: BottomWaveClipper(),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
                       colors: [
-                        Color(0xFFEECE13), // Start color
-                        Color(0xFFB210FF), // End color
+                        Color.fromRGBO(31, 48, 110, 1),
+                        Color(0xFFB210FF),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-
             Positioned(
-              left: 0 ,
+              left: 0,
               right: 0,
               top: 0,
-              height: 150, // Adjust height as needed
+              height: 150,
               child: ClipPath(
                 clipper: TopWaveClipper(),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFFEECE13), // Start color
-                        Color(0xFFB210FF), // End color
+                        Color.fromRGBO(31, 48, 110, 1),
+                        Color(0xFFB210FF),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-
             Positioned(
               left: 50,
-              top: 166 ,
+              top: 166,
               width: 300,
               height: 43,
               child: Container(
                 alignment: Alignment.center,
-
-                child: Text(
+                child: const Text(
                   'ساخت حساب کاربری',
-                  style: TextStyle(fontSize: 30,
+                  style: TextStyle(
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Lato',
                   ),
                 ),
               ),
             ),
-
-
             Positioned(
               left: 120,
               top: 627,
@@ -162,20 +141,16 @@ class _SignUpstate extends State<SignUp>{
               height: 34,
               child: Container(
                 alignment: Alignment.center,
-
-                child: Text(
+                child: const Text(
                   'ساخت حساب',
-                  style: TextStyle(fontSize: 25,
+                  style: TextStyle(
+                    fontSize: 25,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Lato',
                   ),
                 ),
               ),
             ),
-
-            //Email
-
-
             Positioned(
               left: 45,
               top: 433,
@@ -183,22 +158,22 @@ class _SignUpstate extends State<SignUp>{
               height: 50,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFFFF),
+                  color: const Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.circular(40),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 0,
                       blurRadius: 20,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     )
                   ],
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: DropdownButtonFormField<String>(
                   value: role,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'نقش',
                     hintStyle: TextStyle(
@@ -209,7 +184,7 @@ class _SignUpstate extends State<SignUp>{
                       color: Color(0xFF9A9A9A),
                     ),
                   ),
-                  items: [
+                  items: const [
                     DropdownMenuItem(
                       value: 'student',
                       child: Text('Student'),
@@ -231,119 +206,90 @@ class _SignUpstate extends State<SignUp>{
                 ),
               ),
             ),
-            //Mobile
-
-
-
-
-
-
-
-
-            ///USERNAME
-
             Positioned(
               left: 45,
               top: 249,
               width: 300,
               height: 50,
               child: Container(
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(40),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 20,
-                        offset: Offset(0, 3),
-                      )
-                    ]
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(40), boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 0,
+                    blurRadius: 20,
+                    offset: const Offset(0, 3),
+                  )
+                ]),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: TextField(
                   controller: name,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'نام و نام خانوادگی',
                       hintStyle: TextStyle(
                         color: Color(0xFFC8C8C8),
                         // fontFamily: "Bnazanin",
                       ),
-                      prefixIcon: Icon(Icons.person, color: Color(0xFF9A9A9A),)
-                  ),
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Color(0xFF9A9A9A),
+                      )),
                 ),
               ),
-
             ),
-
             Positioned(
               left: 45,
               top: 341,
               width: 300,
               height: 50,
               child: Container(
-                decoration: BoxDecoration(
-                    color: Color(0xFFFFFFFF),
-                    borderRadius: BorderRadius.circular(40),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 20,
-                        offset: Offset(0, 3),
-                      )
-                    ]
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(40), boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 0,
+                    blurRadius: 20,
+                    offset: const Offset(0, 3),
+                  )
+                ]),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 alignment: Alignment.center,
                 child: TextField(
                   controller: ID,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'کد ملی (as your password)',
                       hintStyle: TextStyle(
                         color: Color(0xFFC8C8C8),
                       ),
-                      prefixIcon: Icon(Icons.lock, color: Color(0xFF9A9A9A),)
-                  ),
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Color(0xFF9A9A9A),
+                      )),
                 ),
               ),
             ),
-
             Positioned(
-              top: 670,
-              left: screenWidth *0.3,
-              child: TextButton(
-                onPressed: () => setState(() {
-                  _launchInWebView(Uri.parse("https://lms2.sbu.ac.ir"));
-                }),
-                child: const Text("ورود به سامانه یادگیری مجازی", style: TextStyle(color: Colors.blueAccent , fontSize: 11), ),
-              )),
-
+                top: 670,
+                left: screenWidth * 0.3,
+                child: TextButton(
+                  onPressed: () => setState(() {
+                    _launchInWebView(Uri.parse("https://lms2.sbu.ac.ir"));
+                  }),
+                  child: const Text(
+                    "ورود به سامانه یادگیری مجازی",
+                    style: TextStyle(color: Colors.blueAccent, fontSize: 11),
+                  ),
+                )),
             Positioned(
               top: 710,
-              left: (screenWidth *0.45) ,
-
-                child: Image.asset(
-
-                  // 'assets/images.jpeg',
-                  'Backend/Images/sbu.png',
-
-                  // imgpath,
-
-                  //   'Backend/Images/202463603.jpg',
-                  // "Backend/Images/202423104.jpg",
-                  width: 40,
-                  height: 40,
-                  // fit: BoxFit.cover,
-
+              left: (screenWidth * 0.45),
+              child: Image.asset(
+                'Backend/Images/sbu.png',
+                width: 40,
+                height: 40,
               ),
             ),
-
-
-
             Positioned(
                 left: 289,
                 top: 627,
@@ -351,62 +297,43 @@ class _SignUpstate extends State<SignUp>{
                 height: 34,
                 child: ElevatedButton(
                   onPressed: () async {
-                    
-                    
-                    if(name.text.isEmpty || ID.text.isEmpty || role == ''){
+                    if (name.text.isEmpty || ID.text.isEmpty || role == '') {
                       showToast("پرکردن تمام فیلد ها الزامی است !");
-                    }else {
+                    } else {
                       print("SignUp-${name.text}-${ID.text}-${role}");
                       response = await signupm();
-
-
-                      if (response == "401" ) {
+                      if (response == "401") {
                         print("the id ${ID.text} is already taken !");
-
                         showToast("خطا در ثبت: اسم یا کد ملی تکراری است");
-                      }else if(response == ''){
-                        await Future.delayed(Duration(seconds: 2));
-                        if(response == ''){
+                      } else if (response == '') {
+                        await Future.delayed(const Duration(seconds: 2));
+                        if (response == '') {
                           showToast("خطا در برقراری ارتباط با سرور !");
                           print("end of time");
-                        }else {
+                        } else {
                           print("the user ${name.text} created successfully with SID : ${response}");
                           flag = true;
-
                           showToast("${response} اضافه شد . sid:${name}");
-
-
-                          await Future.delayed(Duration(seconds: 2));
-
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => SignIn()));
+                          await Future.delayed(const Duration(seconds: 2));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
                         }
-
-
-                      }else {
+                      } else {
                         print("the user ${name.text} created successfully with SID : ${response}");
                         flag = true;
-
                         showToast("${name.text} اضافه شد\n . sid:${sidr}");
-
-
-                        await Future.delayed(Duration(seconds: 2));
-
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => SignIn()));
+                        await Future.delayed(const Duration(seconds: 2));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
                       }
-                                          }
-
-
+                    }
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                    shadowColor: MaterialStateProperty.all(Colors.transparent) ,
+                    shadowColor: MaterialStateProperty.all(Colors.transparent),
                     padding: MaterialStateProperty.all(EdgeInsets.zero),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [Color(0xFFF97794), Color(0xFF623AA2)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -417,7 +344,7 @@ class _SignUpstate extends State<SignUp>{
                           color: Colors.black.withOpacity(0.1),
                           spreadRadius: 0,
                           blurRadius: 20,
-                          offset: Offset(0,3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -425,67 +352,36 @@ class _SignUpstate extends State<SignUp>{
                       alignment: Alignment.center,
                       height: 50,
                       width: 200,
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_forward,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                )
-            ),
-
-            // Positioned(
-            //   left: 48,
-            //   top: 550 ,
-            //   width: 300,
-            //   height: 43,
-            //   child: Container(
-            //     alignment: Alignment.center,
-            //
-            //     child: Text(
-            //       CheckRun
-            //           ? flag
-            //             ? 'اضافه شد ${name.text}'
-            //             : 'خطا در ثبت: اسم یا کد ملی تکراری است'
-            //       : "" ,
-            //
-            //       style: TextStyle(fontSize: 15,
-            //         fontWeight: FontWeight.bold,
-            //         color:flag
-            //             ? Colors.green
-            //             : Colors.redAccent,
-            //         fontFamily: 'Bnazanin',
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-            Positioned(
+                )),
+            const Positioned(
               left: 120,
               top: 750,
-
               child: FaIcon(
                 FontAwesomeIcons.facebook,
                 size: 35.0,
                 color: Colors.blue,
               ),
             ),
-            Positioned(
+            const Positioned(
               left: 177,
               top: 750,
-
               child: FaIcon(
                 FontAwesomeIcons.twitter,
                 size: 35.0,
                 color: Colors.blue,
               ),
             ),
-            Positioned(
+            const Positioned(
               left: 232,
               top: 750,
-
               child: FaIcon(
-                FontAwesomeIcons.google ,
+                FontAwesomeIcons.google,
                 size: 35.0,
                 color: Colors.blue,
               ),
@@ -493,16 +389,8 @@ class _SignUpstate extends State<SignUp>{
           ],
         ),
       ),
-
-
-
     );
-
-
   }
-
-  // Positioned(top : 425, left: s)
-
 }
 
 class TopWaveClipper extends CustomClipper<Path> {
@@ -515,10 +403,8 @@ class TopWaveClipper extends CustomClipper<Path> {
     var secondControlPoint = Offset(3 * size.width / 4, size.height - 120);
     var secondEndPoint = Offset(size.width, size.height - 30);
 
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstEndPoint.dx, firstEndPoint.dy);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondEndPoint.dx, secondEndPoint.dy);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy, firstEndPoint.dx, firstEndPoint.dy);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy, secondEndPoint.dx, secondEndPoint.dy);
 
     path.lineTo(size.width, 0);
     path.close();
@@ -540,10 +426,8 @@ class BottomWaveClipper extends CustomClipper<Path> {
     var secondControlPoint = Offset(3 * size.width / 4, size.height + 40);
     var secondEndPoint = Offset(size.width, size.height - 10);
 
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstEndPoint.dx, firstEndPoint.dy);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondEndPoint.dx, secondEndPoint.dy);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy, firstEndPoint.dx, firstEndPoint.dy);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy, secondEndPoint.dx, secondEndPoint.dy);
 
     path.lineTo(size.width, size.height);
     path.close();
@@ -564,21 +448,13 @@ class WaveClipper extends CustomClipper<Path> {
     var secondControlPoint = Offset(3 * size.width / 4, size.height - 120);
     var secondEndPoint = Offset(size.width, size.height - 30);
 
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
-        firstEndPoint.dx, firstEndPoint.dy);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
-        secondEndPoint.dx, secondEndPoint.dy);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy, firstEndPoint.dx, firstEndPoint.dy);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy, secondEndPoint.dx, secondEndPoint.dy);
 
     path.lineTo(size.width, 0);
     path.close();
     return path;
   }
-
-
-
-
-
-
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
